@@ -1,6 +1,5 @@
 import tkinter as tk
 from tkinter import ttk
-from tkinter import font as tkfont
 from tkinter.constants import HORIZONTAL
 import threading
 import time
@@ -19,40 +18,47 @@ class FirstPage(tk.Frame):
             self.grid_columnconfigure(column, weight=1)
 
     def generate_middle_frame(self):
-        self.middle_frame = tk.Frame(self, bg=constants.BACKGROUND_COLOUR)
+        middle_frame = tk.Frame(self, bg=constants.BACKGROUND_COLOUR)
         self.connect_label = tk.Label(
-            self.middle_frame,
+            middle_frame,
             text="Connect the headband to proceed",
-            font=self.controller.LABEL_FONT,
+            font=constants.LABEL_FONT,
             bg=constants.BACKGROUND_COLOUR,
         )
         self.connect_label.pack()
         s = ttk.Style()
         s.theme_use("clam")
-        s.configure("red.Horizontal.TProgressbar", foreground="red", background="red")
+        s.configure(
+            "bar.Horizontal.TProgressbar",
+            troughcolor=constants.BACKGROUND_COLOUR,
+            bordercolor=constants.PROGRESS_BAR_BORDER_COLOUR,
+            background=constants.PROGRESS_BAR_BORDER_COLOUR,
+            lightcolor=constants.PROGRESS_BAR_BORDER_COLOUR,
+            darkcolor=constants.PROGRESS_BAR_BORDER_COLOUR,
+        )
         self.progress_bar = ttk.Progressbar(
-            self.middle_frame,
-            style="red.Horizontal.TProgressbar",
+            middle_frame,
+            style="bar.Horizontal.TProgressbar",
             orient=HORIZONTAL,
-            length=50,
+            length=150,
             mode="indeterminate",
         )
-        self.progress_bar.pack()
-        self.progress_bar.start(50)
+        self.progress_bar.pack(pady=(10, 0))
+        self.progress_bar.start(20)
 
-        return self.middle_frame
+        return middle_frame
 
     def start_connection_check(self):
         for i in range(1, 4):
             time.sleep(1)
-        self.controller.headband.connection_check(self)
+        self.controller.headband.connection_check(self.connection_check_successful)
 
     def start_blink_detection_check(self):
         time.sleep(1)
         self.progress_bar.pack_forget()
         self.connect_label.config(text="Headband connected!")
         self.blink_label.grid(row=2, column=0, columnspan=3)
-        self.controller.headband.blink_detection(self)
+        self.controller.headband.blink_detection(self.blink_detected)
 
     def connection_check_thread(self):
         self.connection_thread = threading.Thread(
@@ -66,7 +72,10 @@ class FirstPage(tk.Frame):
         )
         self.blink_thread.start()
 
-    def go_to_next_page(self):
+    def connection_check_successful(self):
+        self.blink_detection_thread()
+
+    def blink_detected(self):
         self.controller.show_frame(SecondPage)
 
     def __init__(self, parent, controller):
@@ -77,19 +86,20 @@ class FirstPage(tk.Frame):
         self.welcome_label = tk.Label(
             self,
             text="Welcome to Head Writer!",
-            font=controller.TITLE_FONT,
+            font=constants.TITLE_FONT,
             bg=constants.BACKGROUND_COLOUR,
         )
         self.welcome_label.grid(row=0, column=0, columnspan=3)
 
-        middle_frame = self.generate_middle_frame()
-        middle_frame.grid(row=1, column=0, columnspan=3)
+        self.middle_frame = self.generate_middle_frame()
+        self.middle_frame.grid(row=1, column=0, columnspan=3)
 
         self.blink_label = tk.Label(
             self,
             text="Everything ready! Blink to continue.",
-            font=controller.LABEL_FONT,
+            font=constants.LABEL_FONT,
             bg=constants.BACKGROUND_COLOUR,
         )
 
+    def start_threads(self):
         self.connection_check_thread()

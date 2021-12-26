@@ -1,15 +1,10 @@
-from pythonosc import dispatcher
-from pythonosc import osc_server
-import asyncio
-
 from headband import Headband
 
 import tkinter as tk
-from tkinter import font
-
 
 from first_page import FirstPage
 from second_page import SecondPage
+from user import User
 
 
 class Main(tk.Tk):
@@ -19,10 +14,8 @@ class Main(tk.Tk):
     def __init__(self, ip, port, *args, **kwargs):
         tk.Tk.__init__(self, *args, **kwargs)
 
+        self.user = User()
         self.headband = Headband(self, ip, port)
-
-        self.TITLE_FONT = font.Font(family="Helvetica", size=30, weight="bold")
-        self.LABEL_FONT = font.Font(family="Helvetica", size=24)
 
         self.geometry(f"{self.frame_width}x{self.frame_height}")
 
@@ -39,12 +32,13 @@ class Main(tk.Tk):
             page_frame.grid(row=0, column=0, sticky="nsew")
 
         # Show the first page
-        self.show_frame(FirstPage)
+        self.show_frame(SecondPage)
 
     def show_frame(self, page):
         """Show a frame for the given page name"""
         frame = self.frames[page]
         frame.tkraise()
+        frame.start_threads()
 
 
 if __name__ == "__main__":
