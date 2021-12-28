@@ -1,14 +1,14 @@
 import tkinter as tk
 from tkinter import ttk
+from tkinter import font as tkfont
 from tkinter.constants import HORIZONTAL
 import threading
 import time
 
 import constants
-from second_page import SecondPage
 
 
-class FirstPage(tk.Frame):
+class FourthPage(tk.Frame):
     def initialize_grid(self):
         rows = 3
         columns = 3
@@ -19,13 +19,21 @@ class FirstPage(tk.Frame):
 
     def generate_middle_frame(self):
         middle_frame = tk.Frame(self, bg=constants.BACKGROUND_COLOUR)
-        self.connect_label = tk.Label(
+        self.label = tk.Label(
             middle_frame,
-            text="Connect the headband to proceed",
+            text="Analyzing the recorded values...",
             font=constants.LABEL_FONT,
             bg=constants.BACKGROUND_COLOUR,
         )
-        self.connect_label.pack()
+        self.label.pack()
+
+        self.blink_label = tk.Label(
+            middle_frame,
+            text="Blink to continue",
+            font=constants.LABEL_FONT_BOLD,
+            bg=constants.BACKGROUND_COLOUR,
+        )
+
         s = ttk.Style()
         s.theme_use("clam")
         s.configure(
@@ -48,23 +56,21 @@ class FirstPage(tk.Frame):
 
         return middle_frame
 
-    def start_connection_check(self):
-        for i in range(1, 4):
-            time.sleep(1)
-        self.controller.headband.connection_check(self.connection_check_successful)
+    def analyze_values(self):
+        while time.time() - self.timer < 5:
+            print("ANALYZINGGGGGGGG")
+        self.progress_bar.pack_forget()
+        self.blink_label.pack(pady=(10, 0))
+        self.blink_detection_thread()
 
     def start_blink_detection_check(self):
         time.sleep(0.5)
-        self.progress_bar.pack_forget()
-        self.connect_label.config(text="Headband connected!")
-        self.blink_label.grid(row=2, column=0, columnspan=3)
         self.controller.headband.blink_detection(self.blink_detected)
 
-    def connection_check_thread(self):
-        self.connection_thread = threading.Thread(
-            target=self.start_connection_check, args=()
-        )
-        self.connection_thread.start()
+    def analyze_values_thread(self):
+        self.timer = time.time()
+        self.analyze_thread = threading.Thread(target=self.analyze_values, args=())
+        self.analyze_thread.start()
 
     def blink_detection_thread(self):
         self.blink_thread = threading.Thread(
@@ -72,34 +78,17 @@ class FirstPage(tk.Frame):
         )
         self.blink_thread.start()
 
-    def connection_check_successful(self):
-        self.blink_detection_thread()
-
     def blink_detected(self):
-        self.controller.show_frame(SecondPage)
+        print("GOING TO THE NEXT PAGE")
 
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent, bg=constants.BACKGROUND_COLOUR)
         self.controller = controller
+        self.user = self.controller.user
         self.initialize_grid()
-
-        self.welcome_label = tk.Label(
-            self,
-            text="Welcome to Head Writer!",
-            font=constants.TITLE_FONT,
-            bg=constants.BACKGROUND_COLOUR,
-        )
-        self.welcome_label.grid(row=0, column=0, columnspan=3)
 
         self.middle_frame = self.generate_middle_frame()
         self.middle_frame.grid(row=1, column=0, columnspan=3)
 
-        self.blink_label = tk.Label(
-            self,
-            text="Everything ready! Blink to continue.",
-            font=constants.LABEL_FONT,
-            bg=constants.BACKGROUND_COLOUR,
-        )
-
     def start_threads(self):
-        self.connection_check_thread()
+        self.analyze_values_thread()
