@@ -19,7 +19,8 @@ class Headband:
         self.server_thread.start()
 
     def connection_check_handler(self, address: str, *args):
-        if args == (1.0, 1.0, 1.0, 1.0):
+        sensors_list = [args[1], args[2]]
+        if sensors_list == [1.0, 1.0]:
             self.dispatcher.unmap(
                 "/muse/elements/horseshoe", self.connection_check_handler
             )

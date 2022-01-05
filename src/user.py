@@ -1,19 +1,18 @@
 class User:
-    def __init__(self):
-        self.eeg_calm_state_values = []
-        self.eeg_clenching_state_values = []
+    _eeg_calm_state_values = []
+    _eeg_clenching_state_values = []
 
-        self.average_difference_af7_calm_state = None
-        self.average_difference_af8_calm_state = None
+    _average_difference_af7_calm_state = None
+    _average_difference_af8_calm_state = None
 
-        self.average_difference_af7_clenching_state = None
-        self.average_difference_af8_clenching_state = None
+    _average_difference_af7_clenching_state = None
+    _average_difference_af8_clenching_state = None
 
     def save_egg_calm_state_values(self, eeg_list):
-        self.eeg_calm_state_values.append(eeg_list)
+        self._eeg_calm_state_values.append(eeg_list)
 
     def save_egg_clenching_state_values(self, eeg_list):
-        self.eeg_clenching_state_values.append(eeg_list)
+        self._eeg_clenching_state_values.append(eeg_list)
 
     def update_average_difference(self, average_difference, counter, high, low):
         return (average_difference * (counter - 1) + (high - low)) / counter
@@ -32,12 +31,11 @@ class User:
         list = []
 
         if state == "calm":
-            list = self.eeg_calm_state_values
+            list = self._eeg_calm_state_values
         elif state == "clenching":
-            list = self.eeg_clenching_state_values
+            list = self._eeg_clenching_state_values
 
         for i in range(1, len(list) - 1):
-            print(f"{i} - {len(list)}")
             # AF7 sensor
             if list[i - 1][0] < list[i][0] and list[i][0] > list[i + 1][0]:
                 last_highest_point_af7 = list[i][0]
@@ -82,8 +80,8 @@ class User:
                     af8_counter += 1
 
         if state == "calm":
-            self.average_difference_af7_calm_state = average_difference_af7
-            self.average_difference_af8_calm_state = average_difference_af8
+            self._average_difference_af7_calm_state = average_difference_af7
+            self._average_difference_af8_calm_state = average_difference_af8
         elif state == "clenching":
-            self.average_difference_af7_clenching_state = average_difference_af7
-            self.average_difference_af8_clenching_state = average_difference_af8
+            self._average_difference_af7_clenching_state = average_difference_af7
+            self._average_difference_af8_clenching_state = average_difference_af8
