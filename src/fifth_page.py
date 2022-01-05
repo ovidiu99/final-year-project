@@ -29,17 +29,17 @@ class FifthPage(tk.Frame):
 
         return middle_frame
 
-    def analyze_values(self):
-        while True:
-            print("FIFTH PAGE")
+    def listen_for_input(self):
+        self.headband.listen_for_input()
 
-    def analyze_values_thread(self):
-        self.analyze_thread = threading.Thread(target=self.analyze_values, args=())
-        self.analyze_thread.start()
+    def listen_for_input_thread(self):
+        self.input_thread = threading.Thread(target=self.listen_for_input, args=())
+        self.input_thread.start()
 
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent, bg=constants.BACKGROUND_COLOUR)
         self.controller = controller
+        self.headband = self.controller.headband
         self.user = self.controller.user
         self.initialize_grid()
 
@@ -47,5 +47,4 @@ class FifthPage(tk.Frame):
         self.middle_frame.grid(row=1, column=0, columnspan=3)
 
     def start_threads(self):
-        print("FIFTH PAGE")
-        # self.analyze_values_thread()
+        self.listen_for_input_thread()

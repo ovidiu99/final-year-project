@@ -59,8 +59,8 @@ class FourthPage(tk.Frame):
 
     def analyze_values(self):
         self.timer = time.time()
-        self.user.calculate_average_difference(state="calm")
-        self.user.calculate_average_difference(state="clenching")
+        self.user.calculate_average_calm_state_difference()
+        self.user.calculate_average_clenching_state_difference()
         while time.time() - self.timer < 5:
             continue
         self.progress_bar.pack_forget()

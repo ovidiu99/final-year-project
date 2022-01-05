@@ -78,7 +78,7 @@ class SecondPage(tk.Frame):
 
     def record_normal_state(self):
         self.update_progress_bar_thread()
-        self.controller.headband.record_normal_state()
+        self.headband.record_normal_state()
 
     def record_normal_state_thread(self):
         self.record_normal_thread = threading.Thread(
@@ -87,8 +87,7 @@ class SecondPage(tk.Frame):
         self.record_normal_thread.start()
 
     def record_normal_state_finished(self):
-        headband = self.controller.headband
-        headband.unmap_record_normal_state()
+        self.headband.unmap_record_normal_state()
         time.sleep(1)
         self.progress_bar.pack_forget()
         self.blink_label.config(text="Blink to continue")
@@ -111,6 +110,7 @@ class SecondPage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent, bg=constants.BACKGROUND_COLOUR)
         self.controller = controller
+        self.headband = self.controller.headband
         self.user = self.controller.user
         self.initialize_grid()
 
