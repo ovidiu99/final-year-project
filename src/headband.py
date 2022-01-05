@@ -34,13 +34,13 @@ class Headband:
         self.parent_function()
 
     def record_normal_state_handler(self, address: str, *args):
-        self.user.save_egg_calm_state_values(list(args))
+        self.user.save_egg_calm_state_values([list(args)[1], list(args)[2]])
 
     def unmap_record_normal_state(self):
         self.dispatcher.unmap("/muse/eeg", self.record_normal_state_handler)
 
     def record_clenching_state_handler(self, address: str, *args):
-        self.user.save_egg_clenching_state_values(list(args))
+        self.user.save_egg_clenching_state_values([list(args)[1], list(args)[2]])
 
     def unmap_record_clenching_state(self):
         self.dispatcher.unmap("/muse/eeg", self.record_clenching_state_handler)

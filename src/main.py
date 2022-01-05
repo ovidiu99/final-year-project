@@ -6,6 +6,7 @@ from first_page import FirstPage
 from second_page import SecondPage
 from third_page import ThirdPage
 from fourth_page import FourthPage
+from fifth_page import FifthPage
 from user import User
 
 
@@ -27,7 +28,7 @@ class Main(tk.Tk):
         main_frame.grid_columnconfigure(0, weight=1)
 
         self.frames = {}
-        for frame in (FirstPage, SecondPage, ThirdPage, FourthPage):
+        for frame in (FirstPage, SecondPage, ThirdPage, FourthPage, FifthPage):
             page_frame = frame(main_frame, self)
             self.frames[frame] = page_frame
 
@@ -44,5 +45,5 @@ class Main(tk.Tk):
 
 
 if __name__ == "__main__":
-    main = Main("192.168.100.96", 5000)
+    main = Main("192.168.100.22", 5000)
     main.mainloop()

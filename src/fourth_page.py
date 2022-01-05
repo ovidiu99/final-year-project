@@ -6,6 +6,7 @@ import threading
 import time
 
 import constants
+from fifth_page import FifthPage
 
 
 class FourthPage(tk.Frame):
@@ -57,8 +58,11 @@ class FourthPage(tk.Frame):
         return middle_frame
 
     def analyze_values(self):
+        self.timer = time.time()
+        self.user.calculate_average_difference(state="calm")
+        self.user.calculate_average_difference(state="clenching")
         while time.time() - self.timer < 5:
-            print("ANALYZINGGGGGGGG")
+            continue
         self.progress_bar.pack_forget()
         self.blink_label.pack(pady=(10, 0))
         self.blink_detection_thread()
@@ -68,7 +72,6 @@ class FourthPage(tk.Frame):
         self.controller.headband.blink_detection(self.blink_detected)
 
     def analyze_values_thread(self):
-        self.timer = time.time()
         self.analyze_thread = threading.Thread(target=self.analyze_values, args=())
         self.analyze_thread.start()
 
@@ -79,7 +82,7 @@ class FourthPage(tk.Frame):
         self.blink_thread.start()
 
     def blink_detected(self):
-        print("GOING TO THE NEXT PAGE")
+        self.controller.show_frame(FifthPage)
 
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent, bg=constants.BACKGROUND_COLOUR)
