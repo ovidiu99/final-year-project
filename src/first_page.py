@@ -51,14 +51,16 @@ class FirstPage(tk.Frame):
     def start_connection_check(self):
         for i in range(1, 4):
             time.sleep(1)
-        self.controller.headband.connection_check(self.connection_check_successful)
+        self.controller.headband_connection.connection_check(
+            self.connection_check_successful
+        )
 
     def start_blink_detection_check(self):
         time.sleep(0.5)
         self.progress_bar.pack_forget()
         self.connect_label.config(text="Headband connected!")
         self.blink_label.grid(row=2, column=0, columnspan=3)
-        self.controller.headband.blink_detection(self.blink_detected)
+        self.controller.headband_connection.blink_detection(self.blink_detected)
 
     def connection_check_thread(self):
         self.connection_thread = threading.Thread(

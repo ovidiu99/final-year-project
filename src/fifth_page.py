@@ -30,7 +30,7 @@ class FifthPage(tk.Frame):
         return middle_frame
 
     def listen_for_input(self):
-        self.headband.listen_for_input()
+        self.headband_connection.listen_for_input()
 
     def listen_for_input_thread(self):
         self.input_thread = threading.Thread(target=self.listen_for_input, args=())
@@ -39,8 +39,8 @@ class FifthPage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent, bg=constants.BACKGROUND_COLOUR)
         self.controller = controller
-        self.headband = self.controller.headband
-        self.user = self.controller.user
+        self.headband_connection = self.controller.headband_connection
+        self.headband_input = self.controller.headband_input
         self.initialize_grid()
 
         self.middle_frame = self.generate_middle_frame()

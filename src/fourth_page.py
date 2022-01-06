@@ -59,8 +59,8 @@ class FourthPage(tk.Frame):
 
     def analyze_values(self):
         self.timer = time.time()
-        self.user.calculate_average_calm_state_difference()
-        self.user.calculate_average_clenching_state_difference()
+        self.headband_input.calculate_average_calm_state_difference()
+        self.headband_input.calculate_average_clenching_state_difference()
         while time.time() - self.timer < 5:
             continue
         self.progress_bar.pack_forget()
@@ -69,7 +69,7 @@ class FourthPage(tk.Frame):
 
     def start_blink_detection_check(self):
         time.sleep(0.5)
-        self.controller.headband.blink_detection(self.blink_detected)
+        self.controller.headband_connection.blink_detection(self.blink_detected)
 
     def analyze_values_thread(self):
         self.analyze_thread = threading.Thread(target=self.analyze_values, args=())
@@ -87,7 +87,7 @@ class FourthPage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent, bg=constants.BACKGROUND_COLOUR)
         self.controller = controller
-        self.user = self.controller.user
+        self.headband_input = self.controller.headband_input
         self.initialize_grid()
 
         self.middle_frame = self.generate_middle_frame()

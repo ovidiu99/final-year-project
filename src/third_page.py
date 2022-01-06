@@ -58,15 +58,15 @@ class ThirdPage(tk.Frame):
 
     def start_clench_detection_check(self):
         time.sleep(0.5)
-        self.controller.headband.clench_detection(self.clench_detected)
+        self.controller.headband_connection.clench_detection(self.clench_detected)
 
     def start_blink_detection_check(self):
         time.sleep(0.5)
-        self.controller.headband.blink_detection(self.blink_detected)
+        self.controller.headband_connection.blink_detection(self.blink_detected)
 
     def record_clenching_state(self):
         self.update_progress_bar_thread()
-        self.controller.headband.record_clenching_state()
+        self.controller.headband_connection.record_clenching_state()
 
     def clench_detection_thread(self):
         self.clench_thread = threading.Thread(
@@ -96,8 +96,8 @@ class ThirdPage(tk.Frame):
         self.controller.show_frame(FourthPage)
 
     def record_clenching_state_finished(self):
-        headband = self.controller.headband
-        headband.unmap_record_clenching_state()
+        headband_connection = self.controller.headband_connection
+        headband_connection.unmap_record_clenching_state()
         time.sleep(1)
         self.progress_bar.pack_forget()
         self.clench_label.config(text="Blink to continue")
@@ -120,7 +120,7 @@ class ThirdPage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent, bg=constants.BACKGROUND_COLOUR)
         self.controller = controller
-        self.user = self.controller.user
+        self.headband_input = self.controller.headband_input
         self.initialize_grid()
 
         self.middle_frame = self.generate_middle_frame()
