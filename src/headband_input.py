@@ -1,7 +1,11 @@
 import time
 
+from constants import MORSE_CODE
+
 
 class HeadbandInput:
+    _blink_count = 0
+
     _eeg_calm_state_values = []
     _eeg_clenching_state_values = []
 
@@ -12,9 +16,23 @@ class HeadbandInput:
     _average_difference_af8_clenching_state = None
 
     _input_listening_values = []
-    _sequence = []
+
+    _clenching_sequence = []
+    _dots_lines_sequence = ""
+    _output_sequence = ""
+
+    _pause_units = 0
 
     _timer = time.time()
+
+    def get_blink_count(self):
+        return self._blink_count
+
+    def add_blink_count(self):
+        self._blink_count += 1
+
+    def clear_blink_count(self):
+        self._blink_count = 0
 
     def save_egg_calm_state_values(self, eeg_list):
         self._eeg_calm_state_values.append(eeg_list)
@@ -114,7 +132,43 @@ class HeadbandInput:
     def reinitialize_timer(self):
         self._timer = time.time()
 
-    def handle_input(self, egg_list):
+    def trim_string(self, string, numer_of_chars):
+        return string[: len(string) - numer_of_chars]
+
+    def handle_unit_clenches(self):
+        self._clenching_sequence.append(1)
+        self._output_sequence += "~"
+        self._pause_units = 0
+
+    def handle_unit_pauses_advanced_mode(self):
+        clenching_sequence_lenght = len(self._clenching_sequence)
+        self._output_sequence = self.trim_string(
+            self._output_sequence, clenching_sequence_lenght
+        )
+        self._pause_units += 1
+        if self._pause_units < 3 and clenching_sequence_lenght > 0:
+            if clenching_sequence_lenght == 1:
+                self._dots_lines_sequence += "."
+                self._output_sequence += "."
+            elif clenching_sequence_lenght >= 2 and clenching_sequence_lenght <= 4:
+                self._dots_lines_sequence += "-"
+                self._output_sequence += "-"
+        elif self._pause_units == 3 and self._dots_lines_sequence != "":
+            symbol = None
+            sequence = self._dots_lines_sequence
+            self._output_sequence = self.trim_string(
+                self._output_sequence, len(sequence)
+            )
+            if sequence in MORSE_CODE.keys():
+                symbol = MORSE_CODE[sequence]
+                self._output_sequence += symbol
+            self._dots_lines_sequence = ""
+        elif self._pause_units == 7 and self._output_sequence[-1] != " ":
+            self._output_sequence += " "
+
+        self._clenching_sequence = []
+
+    def handle_input(self, egg_list, current_page):
         self._input_listening_values.append(egg_list)
         if time.time() - self._timer >= 0.25:
             self._timer = time.time()
@@ -127,9 +181,9 @@ class HeadbandInput:
             if (average_af7_difference >= threshold_af7) or (
                 average_af8_difference >= threshold_af8
             ):
-                print("CLENCHING")
-                self._sequence.append(1)
+                self.handle_unit_clenches()
             else:
-                self._sequence = []
+                self.handle_unit_pauses_advanced_mode()
 
+            current_page.update_text_label(self._output_sequence)
             self._input_listening_values = []
