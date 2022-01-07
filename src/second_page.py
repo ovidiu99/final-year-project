@@ -30,7 +30,7 @@ class SecondPage(tk.Frame):
 
         self.blink_label = tk.Label(
             middle_frame,
-            text="Blink to start recording",
+            text="Blink twice to start recording",
             font=constants.LABEL_FONT_BOLD,
             bg=constants.BACKGROUND_COLOUR,
         )
@@ -56,14 +56,16 @@ class SecondPage(tk.Frame):
 
         return middle_frame
 
-    def start_blink_detection_check(self, blink_detected_function_name):
+    def start_blink_twice_detection_check(self, blink_detected_function_name):
         function = self.blink_detected_functions_mapping[blink_detected_function_name]
         time.sleep(0.5)
-        self.controller.headband_connection.blink_detection(function)
+        self.controller.headband_connection.blink_twice_detection(function)
 
-    def blink_detection_thread(self, blink_detected_function_name="start_recording"):
+    def blink_twice_detection_thread(
+        self, blink_detected_function_name="start_recording"
+    ):
         self.blink_thread = threading.Thread(
-            target=self.start_blink_detection_check,
+            target=self.start_blink_twice_detection_check,
             args=(blink_detected_function_name,),
         )
         self.blink_thread.start()
@@ -90,9 +92,9 @@ class SecondPage(tk.Frame):
         self.headband_connection.unmap_record_normal_state()
         time.sleep(1)
         self.progress_bar.pack_forget()
-        self.blink_label.config(text="Blink to continue")
+        self.blink_label.config(text="Blink twice to continue")
         self.blink_label.pack(pady=(10, 0))
-        self.blink_detection_thread("next_page")
+        self.blink_twice_detection_thread("next_page")
 
     def update_progress_bar(self):
         for i in range(1, 6):
@@ -123,4 +125,4 @@ class SecondPage(tk.Frame):
         }
 
     def start_threads(self):
-        self.blink_detection_thread()
+        self.blink_twice_detection_thread()

@@ -58,15 +58,15 @@ class ThirdPage(tk.Frame):
 
     def start_clench_detection_check(self):
         time.sleep(0.5)
-        self.controller.headband_connection.clench_detection(self.clench_detected)
+        self.headband_connection.clench_detection(self.clench_detected)
 
-    def start_blink_detection_check(self):
+    def start_blink_twice_detection_check(self):
         time.sleep(0.5)
-        self.controller.headband_connection.blink_detection(self.blink_detected)
+        self.headband_connection.blink_twice_detection(self.blink_detected)
 
     def record_clenching_state(self):
         self.update_progress_bar_thread()
-        self.controller.headband_connection.record_clenching_state()
+        self.headband_connection.record_clenching_state()
 
     def clench_detection_thread(self):
         self.clench_thread = threading.Thread(
@@ -75,9 +75,9 @@ class ThirdPage(tk.Frame):
         )
         self.clench_thread.start()
 
-    def blink_detection_thread(self):
+    def blink_twice_detection_thread(self):
         self.blink_thread = threading.Thread(
-            target=self.start_blink_detection_check, args=()
+            target=self.start_blink_twice_detection_check, args=()
         )
         self.blink_thread.start()
 
@@ -96,13 +96,12 @@ class ThirdPage(tk.Frame):
         self.controller.show_frame(FourthPage)
 
     def record_clenching_state_finished(self):
-        headband_connection = self.controller.headband_connection
-        headband_connection.unmap_record_clenching_state()
+        self.headband_connection.unmap_record_clenching_state()
         time.sleep(1)
         self.progress_bar.pack_forget()
-        self.clench_label.config(text="Blink to continue")
+        self.clench_label.config(text="Blink twice to continue")
         self.clench_label.pack(pady=(10, 0))
-        self.blink_detection_thread()
+        self.blink_twice_detection_thread()
 
     def update_progress_bar(self):
         for i in range(1, 6):
@@ -120,6 +119,7 @@ class ThirdPage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent, bg=constants.BACKGROUND_COLOUR)
         self.controller = controller
+        self.headband_connection = self.controller.headband_connection
         self.headband_input = self.controller.headband_input
         self.initialize_grid()
 
