@@ -5,6 +5,7 @@ import tkinter as tk
 from first_page import FirstPage
 from headband_input import HeadbandInput
 from second_page import SecondPage
+from seventh_page import SeventhPage
 from third_page import ThirdPage
 from fourth_page import FourthPage
 from fifth_page import FifthPage
@@ -13,7 +14,7 @@ from sixth_page import SixthPage
 
 class Main(tk.Tk):
     frame_width = 800
-    frame_height = 500
+    frame_height = 600
 
     def __init__(self, ip, port, *args, **kwargs):
         tk.Tk.__init__(self, *args, **kwargs)
@@ -36,6 +37,7 @@ class Main(tk.Tk):
             FourthPage,
             FifthPage,
             SixthPage,
+            SeventhPage,
         ):
             page_frame = frame(main_frame, self)
             self.frames[frame] = page_frame
@@ -53,5 +55,5 @@ class Main(tk.Tk):
 
 
 if __name__ == "__main__":
-    main = Main("192.168.100.193", 5000)
+    main = Main("192.168.100.22", 5000)
     main.mainloop()
