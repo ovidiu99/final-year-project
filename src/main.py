@@ -1,13 +1,13 @@
-from headband import Headband
+from headband_connection import HeadbandConnection
 
 import tkinter as tk
 
 from first_page import FirstPage
+from headband_input import HeadbandInput
 from second_page import SecondPage
 from third_page import ThirdPage
 from fourth_page import FourthPage
 from fifth_page import FifthPage
-from user import User
 
 
 class Main(tk.Tk):
@@ -17,8 +17,8 @@ class Main(tk.Tk):
     def __init__(self, ip, port, *args, **kwargs):
         tk.Tk.__init__(self, *args, **kwargs)
 
-        self.user = User()
-        self.headband = Headband(self, ip, port)
+        self.headband_input = HeadbandInput()
+        self.headband_connection = HeadbandConnection(self, ip, port)
 
         self.geometry(f"{self.frame_width}x{self.frame_height}")
 

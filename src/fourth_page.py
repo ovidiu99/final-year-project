@@ -30,7 +30,7 @@ class FourthPage(tk.Frame):
 
         self.blink_label = tk.Label(
             middle_frame,
-            text="Blink to continue",
+            text="Blink twice to continue",
             font=constants.LABEL_FONT_BOLD,
             bg=constants.BACKGROUND_COLOUR,
         )
@@ -59,25 +59,25 @@ class FourthPage(tk.Frame):
 
     def analyze_values(self):
         self.timer = time.time()
-        self.user.calculate_average_difference(state="calm")
-        self.user.calculate_average_difference(state="clenching")
+        self.headband_input.calculate_average_calm_state_difference()
+        self.headband_input.calculate_average_clenching_state_difference()
         while time.time() - self.timer < 5:
             continue
         self.progress_bar.pack_forget()
         self.blink_label.pack(pady=(10, 0))
-        self.blink_detection_thread()
+        self.blink_twice_detection_thread()
 
-    def start_blink_detection_check(self):
+    def start_blink_twice_detection_check(self):
         time.sleep(0.5)
-        self.controller.headband.blink_detection(self.blink_detected)
+        self.controller.headband_connection.blink_twice_detection(self.blink_detected)
 
     def analyze_values_thread(self):
         self.analyze_thread = threading.Thread(target=self.analyze_values, args=())
         self.analyze_thread.start()
 
-    def blink_detection_thread(self):
+    def blink_twice_detection_thread(self):
         self.blink_thread = threading.Thread(
-            target=self.start_blink_detection_check, args=()
+            target=self.start_blink_twice_detection_check, args=()
         )
         self.blink_thread.start()
 
@@ -87,7 +87,7 @@ class FourthPage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent, bg=constants.BACKGROUND_COLOUR)
         self.controller = controller
-        self.user = self.controller.user
+        self.headband_input = self.controller.headband_input
         self.initialize_grid()
 
         self.middle_frame = self.generate_middle_frame()
