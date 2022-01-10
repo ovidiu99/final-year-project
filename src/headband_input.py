@@ -1,6 +1,8 @@
 import time
 
 from constants import MORSE_CODE
+from fifth_page import FifthPage
+from seventh_page import SeventhPage
 
 
 class HeadbandInput:
@@ -22,6 +24,8 @@ class HeadbandInput:
     _output_sequence = ""
 
     _pause_units = 0
+
+    _mode = "Beginner"
 
     _timer = time.time()
 
@@ -135,22 +139,22 @@ class HeadbandInput:
     def trim_string(self, string, numer_of_chars):
         return string[: len(string) - numer_of_chars]
 
-    def handle_unit_clenches(self):
+    def handle_unit_clenches_seventh_page(self):
         self._clenching_sequence.append(1)
         self._output_sequence += "~"
         self._pause_units = 0
 
     def handle_unit_pauses_advanced_mode(self):
-        clenching_sequence_lenght = len(self._clenching_sequence)
+        clenching_sequence_length = len(self._clenching_sequence)
         self._output_sequence = self.trim_string(
-            self._output_sequence, clenching_sequence_lenght
+            self._output_sequence, clenching_sequence_length
         )
         self._pause_units += 1
-        if self._pause_units < 3 and clenching_sequence_lenght > 0:
-            if clenching_sequence_lenght == 1:
+        if self._pause_units < 3 and clenching_sequence_length > 0:
+            if clenching_sequence_length == 1:
                 self._dots_lines_sequence += "."
                 self._output_sequence += "."
-            elif clenching_sequence_lenght >= 2 and clenching_sequence_lenght <= 4:
+            elif clenching_sequence_length >= 2 and clenching_sequence_length <= 4:
                 self._dots_lines_sequence += "-"
                 self._output_sequence += "-"
         elif self._pause_units == 3 and self._dots_lines_sequence != "":
@@ -163,13 +167,70 @@ class HeadbandInput:
                 symbol = MORSE_CODE[sequence]
                 self._output_sequence += symbol
             self._dots_lines_sequence = ""
-        elif self._pause_units == 7 and self._output_sequence[-1] != " ":
+        elif self._pause_units == 7 and (
+            self._output_sequence != " " or self._output_sequence[-1] != " "
+        ):
             self._output_sequence += " "
 
         self._clenching_sequence = []
 
+    def handle_unit_pauses_seventh_page(self):
+        if self._mode == "Beginner":
+            self.handle_unit_pauses_advanced_mode()
+        else:
+            self.handle_unit_pauses_advanced_mode()
+
+    def handle_input_seventh_page(
+        self,
+        average_af7_difference,
+        average_af8_difference,
+        threshold_af7,
+        threshold_af8,
+        current_page,
+    ):
+        if (average_af7_difference >= threshold_af7) or (
+            average_af8_difference >= threshold_af8
+        ):
+            self.handle_unit_clenches_seventh_page()
+        else:
+            self.handle_unit_pauses_seventh_page()
+
+        current_page.update_text_label(self._output_sequence)
+
+    def handle_unit_clenches_fifth_page(self, current_page):
+        self._clenching_sequence.append(1)
+        self._pause_units = 0
+        current_page.update_next_action_label(len(self._clenching_sequence))
+
+    def handle_unit_pauses_fifth_page(self, current_page):
+        clench_length = len(self._clenching_sequence)
+        if clench_length >= 1 and clench_length < 4:
+            current_page.open_tutorial_page()
+        elif clench_length >= 4 and clench_length < 8:
+            current_page.update_selected_mode()
+        elif clench_length >= 8:
+            current_page.go_to_next_page()
+
+        self._clenching_sequence = []
+
+    def handle_input_fifth_page(
+        self,
+        average_af7_difference,
+        average_af8_difference,
+        threshold_af7,
+        threshold_af8,
+        current_page,
+    ):
+        if (average_af7_difference >= threshold_af7) or (
+            average_af8_difference >= threshold_af8
+        ):
+            self.handle_unit_clenches_fifth_page(current_page)
+        else:
+            self.handle_unit_pauses_fifth_page(current_page)
+
     def handle_input(self, egg_list, current_page):
         self._input_listening_values.append(egg_list)
+        page_name = current_page.__class__.__name__
         if time.time() - self._timer >= 0.25:
             self._timer = time.time()
             values = self._input_listening_values
@@ -178,12 +239,22 @@ class HeadbandInput:
                 average_af7_difference,
                 average_af8_difference,
             ) = self.calculate_average_difference(values)
-            if (average_af7_difference >= threshold_af7) or (
-                average_af8_difference >= threshold_af8
-            ):
-                self.handle_unit_clenches()
-            else:
-                self.handle_unit_pauses_advanced_mode()
 
-            current_page.update_text_label(self._output_sequence)
+            if page_name == "FifthPage":
+                self.handle_input_fifth_page(
+                    average_af7_difference,
+                    average_af8_difference,
+                    threshold_af7,
+                    threshold_af8,
+                    current_page,
+                )
+            elif page_name == "SeventhPage":
+                self.handle_input_seventh_page(
+                    average_af7_difference,
+                    average_af8_difference,
+                    threshold_af7,
+                    threshold_af8,
+                    current_page,
+                )
+
             self._input_listening_values = []

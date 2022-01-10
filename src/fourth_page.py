@@ -28,13 +28,6 @@ class FourthPage(tk.Frame):
         )
         self.label.pack()
 
-        self.blink_label = tk.Label(
-            middle_frame,
-            text="Blink twice to continue",
-            font=constants.LABEL_FONT_BOLD,
-            bg=constants.BACKGROUND_COLOUR,
-        )
-
         s = ttk.Style()
         s.theme_use("clam")
         s.configure(
@@ -61,28 +54,14 @@ class FourthPage(tk.Frame):
         self.timer = time.time()
         self.headband_input.calculate_average_calm_state_difference()
         self.headband_input.calculate_average_clenching_state_difference()
-        while time.time() - self.timer < 5:
+        while time.time() - self.timer < 3:
             continue
         self.progress_bar.pack_forget()
-        self.blink_label.pack(pady=(10, 0))
-        self.blink_twice_detection_thread()
-
-    def start_blink_twice_detection_check(self):
-        time.sleep(0.5)
-        self.controller.headband_connection.blink_twice_detection(self.blink_detected)
+        self.controller.show_frame(FifthPage)
 
     def analyze_values_thread(self):
         self.analyze_thread = threading.Thread(target=self.analyze_values, args=())
         self.analyze_thread.start()
-
-    def blink_twice_detection_thread(self):
-        self.blink_thread = threading.Thread(
-            target=self.start_blink_twice_detection_check, args=()
-        )
-        self.blink_thread.start()
-
-    def blink_detected(self):
-        self.controller.show_frame(FifthPage)
 
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent, bg=constants.BACKGROUND_COLOUR)
