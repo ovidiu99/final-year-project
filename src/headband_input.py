@@ -163,7 +163,9 @@ class HeadbandInput:
                 symbol = MORSE_CODE[sequence]
                 self._output_sequence += symbol
             self._dots_lines_sequence = ""
-        elif self._pause_units == 7 and self._output_sequence[-1] != " ":
+        elif self._pause_units == 7 and (
+            self._output_sequence != " " or self._output_sequence[-1] != " "
+        ):
             self._output_sequence += " "
 
         self._clenching_sequence = []

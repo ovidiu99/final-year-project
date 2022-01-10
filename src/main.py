@@ -8,6 +8,7 @@ from second_page import SecondPage
 from third_page import ThirdPage
 from fourth_page import FourthPage
 from fifth_page import FifthPage
+from sixth_page import SixthPage
 
 
 class Main(tk.Tk):
@@ -28,7 +29,14 @@ class Main(tk.Tk):
         main_frame.grid_columnconfigure(0, weight=1)
 
         self.frames = {}
-        for frame in (FirstPage, SecondPage, ThirdPage, FourthPage, FifthPage):
+        for frame in (
+            FirstPage,
+            SecondPage,
+            ThirdPage,
+            FourthPage,
+            FifthPage,
+            SixthPage,
+        ):
             page_frame = frame(main_frame, self)
             self.frames[frame] = page_frame
 
