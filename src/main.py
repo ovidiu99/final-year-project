@@ -55,5 +55,5 @@ class Main(tk.Tk):
 
 
 if __name__ == "__main__":
-    main = Main("192.168.100.22", 5000)
+    main = Main("192.168.100.193", 5000)
     main.mainloop()
