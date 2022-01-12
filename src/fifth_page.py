@@ -27,7 +27,7 @@ class FifthPage(tk.Frame):
         upper_frame = tk.Frame(self, bg=constants.BACKGROUND_COLOUR)
         self.upper_label_1 = tk.Label(
             upper_frame,
-            text="The recorded data has been analysed",
+            text="The recorded data has been analysed!",
             font=constants.LABEL_FONT,
             bg=constants.BACKGROUND_COLOUR,
         )
@@ -66,38 +66,29 @@ class FifthPage(tk.Frame):
             text="Clench your jaw once to see the tutorial",
             font=constants.LABEL_FONT_SMALL_BOLD,
             bg=constants.BACKGROUND_COLOUR,
+            borderwidth=2,
+            relief="solid",
         )
         self.middle_label_2 = tk.Label(
-            middle_frame,
-            text="or",
-            font=constants.LABEL_FONT_SMALL_BOLD,
-            bg=constants.BACKGROUND_COLOUR,
-        )
-        self.middle_label_3 = tk.Label(
             middle_frame,
             text="Clench your jaw for 1 second to change the mode",
             font=constants.LABEL_FONT_SMALL_BOLD,
             bg=constants.BACKGROUND_COLOUR,
+            borderwidth=2,
+            relief="solid",
         )
-        self.middle_label_4 = tk.Label(
-            middle_frame,
-            text="or",
-            font=constants.LABEL_FONT_SMALL_BOLD,
-            bg=constants.BACKGROUND_COLOUR,
-        )
-        self.middle_label_5 = tk.Label(
+        self.middle_label_3 = tk.Label(
             middle_frame,
             text="Clench your jaw for 2 seconds to continue",
             font=constants.LABEL_FONT_SMALL_BOLD,
             bg=constants.BACKGROUND_COLOUR,
+            borderwidth=2,
+            relief="solid",
         )
 
-        self.middle_label_1.pack(pady=(50, 0))
-        self.middle_label_2.pack(pady=(2, 0))
-        self.middle_label_3.pack(pady=(2, 0))
-        self.middle_label_4.pack(pady=(2, 0))
-        self.middle_label_5.pack(pady=(2, 0))
-
+        self.middle_label_1.pack(ipadx=15, ipady=10)
+        self.middle_label_2.pack(pady=(15, 0), ipadx=15, ipady=10)
+        self.middle_label_3.pack(pady=(15, 0), ipadx=15, ipady=10)
         return middle_frame
 
     def generate_lower_frame(self):
@@ -113,9 +104,9 @@ class FifthPage(tk.Frame):
 
         self.selected_mode_frame = self.generate_selected_mode_frame(lower_frame)
 
-        self.selected_mode_frame.pack(pady=(50, 0))
+        self.selected_mode_frame.pack()
 
-        self.action_label.pack(pady=(50, 0))
+        self.action_label.pack(pady=(20, 0))
         return lower_frame
 
     def update_next_action_label(self, clench_length):
