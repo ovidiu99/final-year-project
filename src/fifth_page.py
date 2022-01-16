@@ -91,23 +91,23 @@ class FifthPage(tk.Frame):
         self.middle_label_3.pack(pady=(15, 0), ipadx=15, ipady=10)
         return middle_frame
 
-    def generate_lower_frame(self):
-        lower_frame = tk.Frame(self, bg=constants.BACKGROUND_COLOUR)
+    def generate_bottom_frame(self):
+        bottom_frame = tk.Frame(self, bg=constants.BACKGROUND_COLOUR)
 
         self.action_label = tk.Label(
-            lower_frame,
+            bottom_frame,
             text="Action: None",
             font=constants.LABEL_FONT,
             bg=constants.BACKGROUND_COLOUR,
             fg=constants.BACKGROUND_COLOUR,
         )
 
-        self.selected_mode_frame = self.generate_selected_mode_frame(lower_frame)
+        self.selected_mode_frame = self.generate_selected_mode_frame(bottom_frame)
 
         self.selected_mode_frame.pack()
 
         self.action_label.pack(pady=(20, 0))
-        return lower_frame
+        return bottom_frame
 
     def update_next_action_label(self, clench_length):
         if clench_length >= 1 and clench_length < 4:
@@ -154,11 +154,11 @@ class FifthPage(tk.Frame):
 
         self.upper_frame = self.generate_upper_frame()
         self.middle_frame = self.generate_middle_frame()
-        self.lower_frame = self.generate_lower_frame()
+        self.bottom_frame = self.generate_bottom_frame()
 
         self.upper_frame.grid(row=0, column=0, columnspan=3)
         self.middle_frame.grid(row=1, column=0, columnspan=3)
-        self.lower_frame.grid(row=2, column=0, columnspan=3)
+        self.bottom_frame.grid(row=2, column=0, columnspan=3)
 
     def start_threads(self):
         self.listen_for_clenching_thread()

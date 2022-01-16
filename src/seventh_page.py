@@ -85,4 +85,5 @@ class SeventhPage(tk.Frame):
         self.middle_frame.grid(row=1, column=0, columnspan=3)
 
     def start_threads(self):
-        self.listen_for_input_thread()
+        print("SEVENTH PAGE")
+        # self.listen_for_input_thread()

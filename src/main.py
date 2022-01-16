@@ -45,7 +45,7 @@ class Main(tk.Tk):
             page_frame.grid(row=0, column=0, sticky="nsew")
 
         # Show the first page
-        self.show_frame(FirstPage)
+        self.show_frame(SeventhPage)
 
     def show_frame(self, page):
         """Show a frame for the given page name"""
