@@ -45,7 +45,7 @@ class Main(tk.Tk):
             page_frame.grid(row=0, column=0, sticky="nsew")
 
         # Show the first page
-        self.show_frame(SeventhPage)
+        self.show_frame(FirstPage)
 
     def show_frame(self, page):
         """Show a frame for the given page name"""
@@ -55,5 +55,5 @@ class Main(tk.Tk):
 
 
 if __name__ == "__main__":
-    main = Main("192.168.100.193", 5000)
+    main = Main("192.168.100.22", 5000)
     main.mainloop()

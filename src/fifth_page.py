@@ -12,9 +12,6 @@ from sixth_page import SixthPage
 
 
 class FifthPage(tk.Frame):
-
-    _selected_mode = "Beginner"
-
     def initialize_grid(self):
         rows = 3
         columns = 3
@@ -48,9 +45,10 @@ class FifthPage(tk.Frame):
         )
         label.grid(row=0, column=0)
 
+        selected_mode = self.headband_input.get_selected_mode()
         self.selected_mode_label = tk.Label(
             selected_mode_frame,
-            text=self._selected_mode,
+            text=selected_mode,
             font=constants.LABEL_FONT_BOLD,
             bg=constants.BACKGROUND_COLOUR,
         )
@@ -123,15 +121,14 @@ class FifthPage(tk.Frame):
         self.action_label.config(text="Action: None", fg=constants.BACKGROUND_COLOUR)
 
     def update_selected_mode(self):
-        if self._selected_mode == "Beginner":
-            self._selected_mode = "Advanced"
-        else:
-            self._selected_mode = "Beginner"
-        self.selected_mode_label.config(text=self._selected_mode)
+        self.headband_input.change_selected_mode()
+        selected_mode = self.headband_input.get_selected_mode()
+        self.selected_mode_label.config(text=selected_mode)
         self.action_label.config(text="Action: None", fg=constants.BACKGROUND_COLOUR)
 
     def go_to_next_page(self):
         self.headband_connection.unmap_listen_for_input()
+        self.headband_input.set_writing_started()
         self.controller.show_frame(SeventhPage)
         self.action_label.config(text="Action: None", fg=constants.BACKGROUND_COLOUR)
 

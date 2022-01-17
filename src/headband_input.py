@@ -25,7 +25,9 @@ class HeadbandInput:
 
     _pause_units = 0
 
-    _mode = "Beginner"
+    _selected_mode = "Beginner"
+
+    _writing_started = False
 
     _timer = time.time()
 
@@ -60,6 +62,25 @@ class HeadbandInput:
             + self._average_difference_af8_clenching_state
         ) / 2
         return threshold_af7, threshold_af8
+
+    def change_selected_mode(self):
+        if self._selected_mode == "Beginner":
+            print("CHANING TO ADVANCED")
+            self._selected_mode = "Advanced"
+            print(f"{self.get_selected_mode()}")
+        else:
+            print("CHANING TO BEGINNER")
+            self._selected_mode = "Beginner"
+            print(f"{self.get_selected_mode()}")
+
+    def get_selected_mode(self):
+        return self._selected_mode
+
+    def set_writing_started(self):
+        self._writing_started = True
+
+    def get_writing_started(self):
+        return self._writing_started
 
     def update_average_difference(self, average_difference, counter, high, low):
         return (average_difference * (counter - 1) + (high - low)) / counter
@@ -139,18 +160,42 @@ class HeadbandInput:
     def trim_string(self, string, numer_of_chars):
         return string[: len(string) - numer_of_chars]
 
-    def handle_unit_clenches_seventh_page(self):
+    def handle_unit_clenches_seventh_page(self, current_page):
         self._clenching_sequence.append(1)
         self._output_sequence += "~"
         self._pause_units = 0
+        current_page.update_next_action_label(len(self._clenching_sequence))
 
-    def handle_unit_pauses_advanced_mode(self):
+    def handle_unit_pauses_advanced_mode(self, current_page):
         clenching_sequence_length = len(self._clenching_sequence)
         self._output_sequence = self.trim_string(
             self._output_sequence, clenching_sequence_length
         )
         self._pause_units += 1
-        if self._pause_units < 3 and clenching_sequence_length > 0:
+        if self._pause_units == 1 and clenching_sequence_length > 7:
+            if clenching_sequence_length >= 8 and clenching_sequence_length <= 9:
+                if self._dots_lines_sequence != "":
+                    sequence = self._dots_lines_sequence
+                    self._output_sequence = self.trim_string(
+                        self._output_sequence, len(sequence)
+                    )
+                    if self._output_sequence[-1] == " ":
+                        self._output_sequence = self.trim_string(
+                            self._output_sequence, len(sequence)
+                        )
+                    self._dots_lines_sequence = ""
+                else:
+                    self._output_sequence = self.trim_string(self._output_sequence, 1)
+                current_page.hide_action_label()
+            elif clenching_sequence_length >= 10 and clenching_sequence_length <= 11:
+                current_page.update_selected_mode()
+            elif clenching_sequence_length >= 12 and clenching_sequence_length <= 13:
+                current_page.hide_show_morse_code()
+            elif clenching_sequence_length >= 14 and clenching_sequence_length <= 15:
+                current_page.open_tutorial_page()
+            elif clenching_sequence_length >= 16 and clenching_sequence_length <= 20:
+                print("IMPLEMENT COPY AND SAVE")
+        elif self._pause_units < 3 and clenching_sequence_length > 0:
             if clenching_sequence_length == 1:
                 self._dots_lines_sequence += "."
                 self._output_sequence += "."
@@ -167,18 +212,20 @@ class HeadbandInput:
                 symbol = MORSE_CODE[sequence]
                 self._output_sequence += symbol
             self._dots_lines_sequence = ""
-        elif self._pause_units == 7 and (
-            self._output_sequence != " " or self._output_sequence[-1] != " "
+        elif (
+            self._pause_units == 7
+            and self._output_sequence != ""
+            and self._output_sequence[-1] != " "
         ):
             self._output_sequence += " "
 
         self._clenching_sequence = []
 
-    def handle_unit_pauses_seventh_page(self):
-        if self._mode == "Beginner":
-            self.handle_unit_pauses_advanced_mode()
+    def handle_unit_pauses_seventh_page(self, current_page):
+        if self._selected_mode == "Beginner":
+            self.handle_unit_pauses_advanced_mode(current_page)
         else:
-            self.handle_unit_pauses_advanced_mode()
+            self.handle_unit_pauses_advanced_mode(current_page)
 
     def handle_input_seventh_page(
         self,
@@ -191,9 +238,9 @@ class HeadbandInput:
         if (average_af7_difference >= threshold_af7) or (
             average_af8_difference >= threshold_af8
         ):
-            self.handle_unit_clenches_seventh_page()
+            self.handle_unit_clenches_seventh_page(current_page)
         else:
-            self.handle_unit_pauses_seventh_page()
+            self.handle_unit_pauses_seventh_page(current_page)
 
         current_page.update_text_label(self._output_sequence)
 

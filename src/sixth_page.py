@@ -7,7 +7,6 @@ import threading
 import time
 
 import constants
-from seventh_page import SeventhPage
 
 
 class SixthPage(tk.Frame):
@@ -23,7 +22,7 @@ class SixthPage(tk.Frame):
         upper_frame = tk.Frame(self, bg=constants.BACKGROUND_COLOUR)
         self.text_label_upper = tk.Label(
             upper_frame,
-            text="Tutorial",
+            text="Help page",
             font=constants.LABEL_FONT_BOLD,
             bg=constants.BACKGROUND_COLOUR,
         )
@@ -73,8 +72,9 @@ class SixthPage(tk.Frame):
             middle_frame,
             text="Other commands:"
             + "\n    - To delete the previous symbol, clench your jaw for 8-9 units"
-            + "\n    - To bring up the help page, clench your jaw for 10-11 units"
-            + "\n    - To copy the text to another window, clench your jaw for more than 12 units",
+            + "\n    - To change the mode, clench your jaw for 10-11 units"
+            + "\n    - To hide/show the morse code alphabet, clench your jaw for 12-13 units"
+            + "\n    - To copy the text to another window, clench your jaw for 16-20 units",
             font=constants.LABEL_FONT_SMALL,
             bg=constants.BACKGROUND_COLOUR,
             justify=LEFT,
@@ -112,8 +112,14 @@ class SixthPage(tk.Frame):
 
     def clench_detected(self):
         from fifth_page import FifthPage
+        from seventh_page import SeventhPage
 
-        self.controller.show_frame(FifthPage)
+        writing_started = self.headband_input.get_writing_started()
+
+        if not writing_started:
+            self.controller.show_frame(FifthPage)
+        else:
+            self.controller.show_frame(SeventhPage)
 
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent, bg=constants.BACKGROUND_COLOUR)
