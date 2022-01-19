@@ -22,7 +22,7 @@ class SeventhPage(tk.Frame):
             self.grid_columnconfigure(column, weight=1)
 
     def generate_upper_frame(self):
-        upper_frame = tk.Frame(self, bg="green")
+        upper_frame = tk.Frame(self, bg=constants.BACKGROUND_COLOUR)
 
         self.help_page_label = tk.Label(
             upper_frame,
@@ -164,11 +164,16 @@ class SeventhPage(tk.Frame):
     def show_action_label(self, text):
         self.action_label.config(text=text, fg="black")
 
-    def update_next_action_label(self, clench_length):
+    def update_next_action_label(self, clench_length, selected_mode):
         if clench_length == 1:
             self.show_action_label("Action: Dot")
         if clench_length >= 2 and clench_length <= 4:
             self.show_action_label("Action: Line")
+        if clench_length >= 5 and clench_length <= 7:
+            if selected_mode == "Beginner":
+                self.show_action_label("Action: Space")
+            else:
+                self.hide_action_label()
         if clench_length >= 8 and clench_length <= 9:
             self.show_action_label("Action: Delete last character")
         elif clench_length >= 10 and clench_length <= 11:
@@ -189,7 +194,6 @@ class SeventhPage(tk.Frame):
         self.headband_input.change_selected_mode()
         selected_mode = self.headband_input.get_selected_mode()
         self.selected_mode_label.config(text=selected_mode)
-        self.hide_action_label()
 
     def hide_show_morse_code(self):
         if self._show_morse_code is True:
@@ -197,12 +201,10 @@ class SeventhPage(tk.Frame):
         else:
             self.morse_code_alphabet_frame.pack(side=BOTTOM)
         self._show_morse_code = not self._show_morse_code
-        self.hide_action_label()
 
     def open_tutorial_page(self):
         self.headband_connection.unmap_listen_for_input()
         self.controller.show_frame(SixthPage)
-        self.hide_action_label()
 
     def update_text_label(self, text):
         self.current_possition_label_up.config(text=text[: len(text) - 1])

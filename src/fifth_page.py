@@ -77,7 +77,7 @@ class FifthPage(tk.Frame):
         )
         self.middle_label_3 = tk.Label(
             middle_frame,
-            text="Clench your jaw for 2 seconds to continue",
+            text="Clench your jaw for 2 to 3 seconds to continue",
             font=constants.LABEL_FONT_SMALL_BOLD,
             bg=constants.BACKGROUND_COLOUR,
             borderwidth=2,
@@ -107,13 +107,21 @@ class FifthPage(tk.Frame):
         self.action_label.pack(pady=(20, 0))
         return bottom_frame
 
+    def hide_action_label(self):
+        self.action_label.config(text="Action: None", fg=constants.BACKGROUND_COLOUR)
+
+    def show_action_label(self, text):
+        self.action_label.config(text=text, fg="black")
+
     def update_next_action_label(self, clench_length):
         if clench_length >= 1 and clench_length < 4:
-            self.action_label.config(text="Action: Open tutorial page", fg="black")
+            self.show_action_label("Action: Open tutorial page")
         elif clench_length >= 4 and clench_length < 8:
-            self.action_label.config(text="Action: Change mode", fg="black")
-        elif clench_length >= 8:
-            self.action_label.config(text="Action: Go to next page", fg="black")
+            self.show_action_label("Action: Change mode")
+        elif clench_length >= 8 and clench_length <= 12:
+            self.show_action_label("Action: Go to next page")
+        elif clench_length > 12:
+            self.hide_action_label()
 
     def open_tutorial_page(self):
         self.headband_connection.unmap_listen_for_input()
