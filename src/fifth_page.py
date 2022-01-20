@@ -12,9 +12,6 @@ from sixth_page import SixthPage
 
 
 class FifthPage(tk.Frame):
-
-    _selected_mode = "Beginner"
-
     def initialize_grid(self):
         rows = 3
         columns = 3
@@ -48,9 +45,10 @@ class FifthPage(tk.Frame):
         )
         label.grid(row=0, column=0)
 
+        selected_mode = self.headband_input.get_selected_mode()
         self.selected_mode_label = tk.Label(
             selected_mode_frame,
-            text=self._selected_mode,
+            text=selected_mode,
             font=constants.LABEL_FONT_BOLD,
             bg=constants.BACKGROUND_COLOUR,
         )
@@ -79,7 +77,7 @@ class FifthPage(tk.Frame):
         )
         self.middle_label_3 = tk.Label(
             middle_frame,
-            text="Clench your jaw for 2 seconds to continue",
+            text="Clench your jaw for 2 to 3 seconds to continue",
             font=constants.LABEL_FONT_SMALL_BOLD,
             bg=constants.BACKGROUND_COLOUR,
             borderwidth=2,
@@ -91,31 +89,39 @@ class FifthPage(tk.Frame):
         self.middle_label_3.pack(pady=(15, 0), ipadx=15, ipady=10)
         return middle_frame
 
-    def generate_lower_frame(self):
-        lower_frame = tk.Frame(self, bg=constants.BACKGROUND_COLOUR)
+    def generate_bottom_frame(self):
+        bottom_frame = tk.Frame(self, bg=constants.BACKGROUND_COLOUR)
 
         self.action_label = tk.Label(
-            lower_frame,
+            bottom_frame,
             text="Action: None",
             font=constants.LABEL_FONT,
             bg=constants.BACKGROUND_COLOUR,
             fg=constants.BACKGROUND_COLOUR,
         )
 
-        self.selected_mode_frame = self.generate_selected_mode_frame(lower_frame)
+        self.selected_mode_frame = self.generate_selected_mode_frame(bottom_frame)
 
         self.selected_mode_frame.pack()
 
         self.action_label.pack(pady=(20, 0))
-        return lower_frame
+        return bottom_frame
+
+    def hide_action_label(self):
+        self.action_label.config(text="Action: None", fg=constants.BACKGROUND_COLOUR)
+
+    def show_action_label(self, text):
+        self.action_label.config(text=text, fg="black")
 
     def update_next_action_label(self, clench_length):
         if clench_length >= 1 and clench_length < 4:
-            self.action_label.config(text="Action: Open tutorial page", fg="black")
+            self.show_action_label("Action: Open tutorial page")
         elif clench_length >= 4 and clench_length < 8:
-            self.action_label.config(text="Action: Change mode", fg="black")
-        elif clench_length >= 8:
-            self.action_label.config(text="Action: Go to next page", fg="black")
+            self.show_action_label("Action: Change mode")
+        elif clench_length >= 8 and clench_length <= 12:
+            self.show_action_label("Action: Go to next page")
+        elif clench_length > 12:
+            self.hide_action_label()
 
     def open_tutorial_page(self):
         self.headband_connection.unmap_listen_for_input()
@@ -123,15 +129,14 @@ class FifthPage(tk.Frame):
         self.action_label.config(text="Action: None", fg=constants.BACKGROUND_COLOUR)
 
     def update_selected_mode(self):
-        if self._selected_mode == "Beginner":
-            self._selected_mode = "Advanced"
-        else:
-            self._selected_mode = "Beginner"
-        self.selected_mode_label.config(text=self._selected_mode)
+        self.headband_input.change_selected_mode()
+        selected_mode = self.headband_input.get_selected_mode()
+        self.selected_mode_label.config(text=selected_mode)
         self.action_label.config(text="Action: None", fg=constants.BACKGROUND_COLOUR)
 
     def go_to_next_page(self):
         self.headband_connection.unmap_listen_for_input()
+        self.headband_input.set_writing_started()
         self.controller.show_frame(SeventhPage)
         self.action_label.config(text="Action: None", fg=constants.BACKGROUND_COLOUR)
 
@@ -154,11 +159,11 @@ class FifthPage(tk.Frame):
 
         self.upper_frame = self.generate_upper_frame()
         self.middle_frame = self.generate_middle_frame()
-        self.lower_frame = self.generate_lower_frame()
+        self.bottom_frame = self.generate_bottom_frame()
 
         self.upper_frame.grid(row=0, column=0, columnspan=3)
         self.middle_frame.grid(row=1, column=0, columnspan=3)
-        self.lower_frame.grid(row=2, column=0, columnspan=3)
+        self.bottom_frame.grid(row=2, column=0, columnspan=3)
 
     def start_threads(self):
         self.listen_for_clenching_thread()
