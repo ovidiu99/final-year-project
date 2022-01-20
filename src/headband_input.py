@@ -31,6 +31,8 @@ class HeadbandInput:
 
     _timer = time.time()
 
+    _enter_count = 0
+
     def get_blink_count(self):
         return self._blink_count
 
@@ -156,9 +158,15 @@ class HeadbandInput:
     def trim_string(self, string, numer_of_chars):
         return string[: len(string) - numer_of_chars]
 
+    def add_to_output_sequence(self, text):
+        self._output_sequence += text
+        if len(self._output_sequence) > 0 and len(self._output_sequence) % 65 == 0:
+            self._output_sequence += "\n"
+            self._enter_count += 1
+
     def handle_unit_clenches_seventh_page(self, current_page):
         self._clenching_sequence.append(1)
-        self._output_sequence += "~"
+        self.add_to_output_sequence("~")
         self._pause_units = 0
         current_page.update_next_action_label(
             len(self._clenching_sequence), self._selected_mode
@@ -170,16 +178,25 @@ class HeadbandInput:
             and clenching_sequence_length <= 7
             and self._selected_mode == "Beginner"
         ):
-            self._output_sequence += " "
+            self.add_to_output_sequence(" ")
         if clenching_sequence_length >= 8 and clenching_sequence_length <= 9:
             if self._dots_lines_sequence != "":
                 sequence = self._dots_lines_sequence
                 self._output_sequence = self.trim_string(
-                    self._output_sequence, len(sequence)
+                    self._output_sequence, len(sequence) + self._enter_count
                 )
                 self._dots_lines_sequence = ""
             else:
-                self._output_sequence = self.trim_string(self._output_sequence, 1)
+                if len(self._output_sequence) >= 1:
+                    if self._output_sequence[-1] == "\n":
+                        self._output_sequence = self.trim_string(
+                            self._output_sequence, 2
+                        )
+                    else:
+                        self._output_sequence = self.trim_string(
+                            self._output_sequence, 1
+                        )
+
             current_page.hide_action_label()
         elif clenching_sequence_length >= 10 and clenching_sequence_length <= 11:
             current_page.update_selected_mode()
@@ -193,24 +210,26 @@ class HeadbandInput:
     def handle_lines_and_dots(self, clenching_sequence_length):
         if clenching_sequence_length == 1:
             self._dots_lines_sequence += "."
-            self._output_sequence += "."
+            self.add_to_output_sequence(".")
         elif clenching_sequence_length >= 2 and clenching_sequence_length <= 4:
             self._dots_lines_sequence += "-"
-            self._output_sequence += "-"
+            self.add_to_output_sequence("-")
 
     def handle_add_symbol(self):
         symbol = None
         sequence = self._dots_lines_sequence
-        self._output_sequence = self.trim_string(self._output_sequence, len(sequence))
+        self._output_sequence = self.trim_string(
+            self._output_sequence, len(sequence) + self._enter_count
+        )
         if sequence in MORSE_CODE.keys():
             symbol = MORSE_CODE[sequence]
-            self._output_sequence += symbol
+            self.add_to_output_sequence(symbol)
         self._dots_lines_sequence = ""
 
     def handle_unit_pauses_beginner_mode(self, current_page):
         clenching_sequence_length = len(self._clenching_sequence)
         self._output_sequence = self.trim_string(
-            self._output_sequence, clenching_sequence_length
+            self._output_sequence, clenching_sequence_length + self._enter_count
         )
         self._pause_units += 1
         if self._pause_units == 1 and clenching_sequence_length >= 5:
@@ -220,11 +239,12 @@ class HeadbandInput:
         elif self._pause_units == 3 and self._dots_lines_sequence != "":
             self.handle_add_symbol()
         self._clenching_sequence = []
+        self._enter_count = 0
 
     def handle_unit_pauses_advanced_mode(self, current_page):
         clenching_sequence_length = len(self._clenching_sequence)
         self._output_sequence = self.trim_string(
-            self._output_sequence, clenching_sequence_length
+            self._output_sequence, clenching_sequence_length + self._enter_count
         )
         self._pause_units += 1
         if self._pause_units == 1 and clenching_sequence_length > 7:
@@ -238,9 +258,10 @@ class HeadbandInput:
             and self._output_sequence != ""
             and self._output_sequence[-1] != " "
         ):
-            self._output_sequence += " "
+            self.add_to_output_sequence(" ")
 
         self._clenching_sequence = []
+        self._enter_count = 0
 
     def handle_unit_pauses_seventh_page(self, current_page):
         if self._selected_mode == "Beginner":
