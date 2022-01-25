@@ -1,8 +1,11 @@
 import time
 
+import pyperclip
+
 from constants import MORSE_CODE
 from fifth_page import FifthPage
 from seventh_page import SeventhPage
+import pyautogui
 
 
 class HeadbandInput:
@@ -29,9 +32,14 @@ class HeadbandInput:
 
     _writing_started = False
 
-    _timer = time.time()
+    _input_timer = time.time()
+    _head_movement_timer = time.time()
 
     _enter_count = 0
+
+    _copy_mode = False
+
+    _screen_width, _screen_height = pyautogui.size()
 
     def get_blink_count(self):
         return self._blink_count
@@ -42,16 +50,16 @@ class HeadbandInput:
     def clear_blink_count(self):
         self._blink_count = 0
 
-    def save_egg_calm_state_values(self, eeg_list):
+    def save_eeg_calm_state_values(self, eeg_list):
         self._eeg_calm_state_values.append(eeg_list)
 
-    def get_egg_calm_state_values(self):
+    def get_eeg_calm_state_values(self):
         return self._eeg_calm_state_values
 
-    def save_egg_clenching_state_values(self, eeg_list):
+    def save_eeg_clenching_state_values(self, eeg_list):
         self._eeg_clenching_state_values.append(eeg_list)
 
-    def get_egg_clenching_state_values(self):
+    def get_eeg_clenching_state_values(self):
         return self._eeg_clenching_state_values
 
     def get_clenching_threshold_values(self):
@@ -152,11 +160,20 @@ class HeadbandInput:
             self._average_difference_af8_clenching_state,
         ) = self.calculate_average_difference(self._eeg_clenching_state_values)
 
-    def reinitialize_timer(self):
-        self._timer = time.time()
+    def reinitialize_input_timer(self):
+        self._input_timer = time.time()
+
+    def reinitialize_head_movement_timer(self):
+        self._head_movement_timer = time.time()
 
     def trim_string(self, string, numer_of_chars):
         return string[: len(string) - numer_of_chars]
+
+    def clean_output_sequence(self):
+        self._output_sequence = ""
+
+    def get_output_sequence_without_enters(self):
+        return self._output_sequence.replace("\n", "")
 
     def add_to_output_sequence(self, text):
         self._output_sequence += text
@@ -166,10 +183,11 @@ class HeadbandInput:
 
     def handle_unit_clenches_seventh_page(self, current_page):
         self._clenching_sequence.append(1)
-        self.add_to_output_sequence("~")
+        if self._copy_mode is False:
+            self.add_to_output_sequence("~")
         self._pause_units = 0
         current_page.update_next_action_label(
-            len(self._clenching_sequence), self._selected_mode
+            len(self._clenching_sequence), self._selected_mode, self._copy_mode
         )
 
     def handle_extra_commands(self, clenching_sequence_length, current_page):
@@ -205,7 +223,11 @@ class HeadbandInput:
         elif clenching_sequence_length >= 14 and clenching_sequence_length <= 15:
             current_page.open_tutorial_page()
         elif clenching_sequence_length >= 16 and clenching_sequence_length <= 20:
-            print("IMPLEMENT COPY AND SAVE")
+            self._copy_mode = True
+            clean_text = self.get_output_sequence_without_enters()
+            pyperclip.copy(clean_text)
+            pyautogui.moveTo(self._screen_width / 2, self._screen_height / 2)
+            current_page.start_copy_mode()
 
     def handle_lines_and_dots(self, clenching_sequence_length):
         if clenching_sequence_length == 1:
@@ -263,10 +285,26 @@ class HeadbandInput:
         self._clenching_sequence = []
         self._enter_count = 0
 
+    def handle_unit_pauses_copy_mode(self, current_page):
+        clench_length = len(self._clenching_sequence)
+        if clench_length == 1:
+            pyautogui.click()
+        elif clench_length >= 2 and clench_length <= 4:
+            pyautogui.doubleClick()
+        elif clench_length >= 5 and clench_length <= 9:
+            pyautogui.hotkey("command", "v")
+            self._copy_mode = False
+            current_page.stop_copy_mode()
+            self.clean_output_sequence()
+
+        self._clenching_sequence = []
+
     def handle_unit_pauses_seventh_page(self, current_page):
-        if self._selected_mode == "Beginner":
+        if self._copy_mode is True:
+            self.handle_unit_pauses_copy_mode(current_page)
+        elif self._selected_mode == "Beginner":
             self.handle_unit_pauses_beginner_mode(current_page)
-        else:
+        elif self._selected_mode == "Advanced":
             self.handle_unit_pauses_advanced_mode(current_page)
         current_page.hide_action_label()
 
@@ -285,7 +323,8 @@ class HeadbandInput:
         else:
             self.handle_unit_pauses_seventh_page(current_page)
 
-        current_page.update_text_label(self._output_sequence)
+        if self._copy_mode is False:
+            current_page.update_text_label(self._output_sequence)
 
     def handle_unit_clenches_fifth_page(self, current_page):
         self._clenching_sequence.append(1)
@@ -318,11 +357,11 @@ class HeadbandInput:
         else:
             self.handle_unit_pauses_fifth_page(current_page)
 
-    def handle_input(self, egg_list, current_page):
-        self._input_listening_values.append(egg_list)
+    def handle_input(self, eeg_list, current_page):
+        self._input_listening_values.append(eeg_list)
         page_name = current_page.__class__.__name__
-        if time.time() - self._timer >= 0.25:
-            self._timer = time.time()
+        if time.time() - self._input_timer >= 0.25:
+            self._input_timer = time.time()
             values = self._input_listening_values
             threshold_af7, threshold_af8 = self.get_clenching_threshold_values()
             (
@@ -348,3 +387,17 @@ class HeadbandInput:
                 )
 
             self._input_listening_values = []
+
+    def handle_head_movement(self, eeg_list, current_page):
+        y_value = eeg_list[0]
+        z_value = eeg_list[1]
+
+        if y_value > 7:
+            pyautogui.move(0, -35)
+        elif y_value < -7:
+            pyautogui.move(0, 35)
+
+        if z_value > 7:
+            pyautogui.move(35, 0)
+        elif z_value < -7:
+            pyautogui.move(-35, 0)

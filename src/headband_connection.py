@@ -45,15 +45,18 @@ class HeadbandConnection:
         self._clench_detection_action()
 
     def record_normal_state_handler(self, address: str, *args):
-        self.headband_input.save_egg_calm_state_values([list(args)[1], list(args)[2]])
+        self.headband_input.save_eeg_calm_state_values([list(args)[1], list(args)[2]])
 
     def record_clenching_state_handler(self, address: str, *args):
-        self.headband_input.save_egg_clenching_state_values(
+        self.headband_input.save_eeg_clenching_state_values(
             [list(args)[1], list(args)[2]]
         )
 
     def listen_for_input_handler(self, address: str, *args):
         self._listen_for_input_action([args[1], args[2]])
+
+    def listen_for_head_movement_handler(self, address: str, *args):
+        self._listen_for_head_movement_action([args[1], args[2]])
 
     # UNMAPPINGS
     def unmap_blink_twice_detection(self):
@@ -67,6 +70,9 @@ class HeadbandConnection:
 
     def unmap_listen_for_input(self):
         self.dispatcher.unmap("/muse/eeg", self.listen_for_input_handler)
+
+    def unmap_listen_for_head_movement(self):
+        self.dispatcher.unmap("/muse/gyro", self.listen_for_head_movement_handler)
 
     # ACTIONS
     def connection_check(self, trigger_function=None):
@@ -89,5 +95,10 @@ class HeadbandConnection:
 
     def listen_for_input(self, trigger_function):
         self._listen_for_input_action = trigger_function
-        self.headband_input.reinitialize_timer()
+        self.headband_input.reinitialize_input_timer()
         self.dispatcher.map("/muse/eeg", self.listen_for_input_handler)
+
+    def listen_for_head_movement(self, trigger_function):
+        self._listen_for_head_movement_action = trigger_function
+        self.headband_input.reinitialize_head_movement_timer()
+        self.dispatcher.map("/muse/gyro", self.listen_for_head_movement_handler)
