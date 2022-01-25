@@ -175,31 +175,41 @@ class SeventhPage(tk.Frame):
     def show_action_label(self, text):
         self.action_label.config(text=text, fg="black", relief="solid")
 
-    def update_next_action_label(self, clench_length, selected_mode):
-        if clench_length == 1:
-            self.show_action_label("Action: Dot")
-        if clench_length >= 2 and clench_length <= 4:
-            self.show_action_label("Action: Line")
-        if clench_length >= 5 and clench_length <= 7:
-            if selected_mode == "Beginner":
-                self.show_action_label("Action: Space")
-            else:
+    def update_next_action_label(self, clench_length, selected_mode, copy_mode=False):
+        if copy_mode is True:
+            if clench_length == 1:
+                self.show_action_label("Action: Click")
+            elif clench_length >= 2 and clench_length <= 4:
+                self.show_action_label("Action: Double click")
+            elif clench_length >= 5 and clench_length <= 9:
+                self.show_action_label("Action: Paste")
+            elif clench_length >= 10:
                 self.hide_action_label()
-        if clench_length >= 8 and clench_length <= 9:
-            self.show_action_label("Action: Delete last character")
-        elif clench_length >= 10 and clench_length <= 11:
-            self.show_action_label("Action: Change mode")
-        elif clench_length >= 12 and clench_length <= 13:
-            text = "Action: Show morse code"
-            if self._show_morse_code is True:
-                text = "Action: Hide morse code"
-            self.show_action_label(text)
-        elif clench_length >= 14 and clench_length <= 15:
-            self.show_action_label("Action: Open tutorial page")
-        elif clench_length >= 16 and clench_length <= 20:
-            self.show_action_label("Action: Copy and save")
-        elif clench_length > 20:
-            self.hide_action_label()
+        else:
+            if clench_length == 1:
+                self.show_action_label("Action: Dot")
+            elif clench_length >= 2 and clench_length <= 4:
+                self.show_action_label("Action: Line")
+            elif clench_length >= 5 and clench_length <= 7:
+                if selected_mode == "Beginner":
+                    self.show_action_label("Action: Space")
+                elif selected_mode == "Advanced":
+                    self.hide_action_label()
+            elif clench_length >= 8 and clench_length <= 9:
+                self.show_action_label("Action: Delete last character")
+            elif clench_length >= 10 and clench_length <= 11:
+                self.show_action_label("Action: Change mode")
+            elif clench_length >= 12 and clench_length <= 13:
+                text = "Action: Show morse code"
+                if self._show_morse_code is True:
+                    text = "Action: Hide morse code"
+                self.show_action_label(text)
+            elif clench_length >= 14 and clench_length <= 15:
+                self.show_action_label("Action: Open tutorial page")
+            elif clench_length >= 16 and clench_length <= 20:
+                self.show_action_label("Action: Copy and save")
+            elif clench_length > 20:
+                self.hide_action_label()
 
     def update_selected_mode(self):
         self.headband_input.change_selected_mode()
@@ -247,6 +257,25 @@ class SeventhPage(tk.Frame):
     def listen_for_input_thread(self):
         self.input_thread = threading.Thread(target=self.listen_for_input, args=())
         self.input_thread.start()
+
+    def handle_head_movement(self, input_list):
+        self.headband_input.handle_head_movement(input_list, self)
+
+    def listen_for_head_movement(self):
+        self.headband_connection.listen_for_head_movement(self.handle_head_movement)
+
+    def listen_for_head_movement_thread(self):
+        self.head_movement_thread = threading.Thread(
+            target=self.listen_for_head_movement, args=()
+        )
+        self.head_movement_thread.start()
+
+    def start_copy_mode(self):
+        self.listen_for_head_movement_thread()
+
+    def stop_copy_mode(self):
+        self.controller.focus_force()
+        self.headband_connection.unmap_listen_for_head_movement()
 
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent, bg=constants.BACKGROUND_COLOUR)

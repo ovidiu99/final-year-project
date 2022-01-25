@@ -78,6 +78,7 @@ class FirstPage(tk.Frame):
         self.blink_twice_detection_thread()
 
     def blink_detected(self):
+        self.controller.focus_force()
         self.controller.show_frame(SecondPage)
 
     def __init__(self, parent, controller):
