@@ -293,6 +293,7 @@ class HeadbandInput:
             pyautogui.doubleClick()
         elif clench_length >= 5 and clench_length <= 9:
             pyautogui.hotkey("command", "v")
+        elif clench_length >= 10 and clench_length <= 13:
             self._copy_mode = False
             current_page.stop_copy_mode()
             self.clean_output_sequence()
@@ -393,11 +394,11 @@ class HeadbandInput:
         z_value = eeg_list[1]
 
         if y_value > 7:
-            pyautogui.move(0, -35)
+            pyautogui.move(0, -y_value)
         elif y_value < -7:
-            pyautogui.move(0, 35)
+            pyautogui.move(0, -y_value)
 
         if z_value > 7:
-            pyautogui.move(35, 0)
+            pyautogui.move(z_value, 0)
         elif z_value < -7:
-            pyautogui.move(-35, 0)
+            pyautogui.move(z_value, 0)

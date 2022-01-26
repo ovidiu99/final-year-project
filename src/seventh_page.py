@@ -183,7 +183,9 @@ class SeventhPage(tk.Frame):
                 self.show_action_label("Action: Double click")
             elif clench_length >= 5 and clench_length <= 9:
                 self.show_action_label("Action: Paste")
-            elif clench_length >= 10:
+            elif clench_length >= 10 and clench_length <= 13:
+                self.show_action_label("Action: Close copy mode")
+            elif clench_length >= 14:
                 self.hide_action_label()
         else:
             if clench_length == 1:
@@ -207,7 +209,7 @@ class SeventhPage(tk.Frame):
             elif clench_length >= 14 and clench_length <= 15:
                 self.show_action_label("Action: Open tutorial page")
             elif clench_length >= 16 and clench_length <= 20:
-                self.show_action_label("Action: Copy and save")
+                self.show_action_label("Action: Open copy mode")
             elif clench_length > 20:
                 self.hide_action_label()
 
