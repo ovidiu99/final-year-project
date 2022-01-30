@@ -37,6 +37,8 @@ class HeadbandInput:
 
     _enter_count = 0
 
+    _show_morse_code = False
+
     _copy_mode = False
 
     _screen_width, _screen_height = pyautogui.size()
@@ -175,9 +177,49 @@ class HeadbandInput:
     def get_output_sequence_without_enters(self):
         return self._output_sequence.replace("\n", "")
 
+    def get_number_of_enters(self):
+        return self._output_sequence.count("\n")
+
+    def get_show_morse_code(self):
+        return self._show_morse_code
+
+    def set_show_morse_code(self, value):
+        self._show_morse_code = value
+
     def add_to_output_sequence(self, text):
+        # output_sequence = self.get_output_sequence_without_enters()
+        # number_of_enters = self.get_number_of_enters()
+        # print(f"self output - {self._output_sequence}")
+        # print(f"output_sequence - {output_sequence}")
+        # print(f"number_of_enters - {number_of_enters}")
+        # print(f"len(output_sequence) % 65 == 0 - {len(output_sequence) % 65 == 0}")
+        # print(f"len(output_sequence) >0 - {len(output_sequence) > 0}")
+        # print(
+        #     f"(self._show_morse_code is True and number_of_enters < 2) - {(self._show_morse_code is True and number_of_enters < 2)}"
+        # )
+        # print(
+        #     f"or (self._show_morse_code is False and number_of_enters < 2) - {(self._show_morse_code is False and number_of_enters < 2)}"
+        # )
+        # if not (
+        #     (
+        #         (self._show_morse_code is True and number_of_enters == 2)
+        #         or (self._show_morse_code is False and number_of_enters == 2)
+        #     )
+        #     and (len(output_sequence) > 0 and len(output_sequence) % 65 == 0)
+        # ):
+        #     self._output_sequence += text
+        #     if (
+        #         (self._show_morse_code is True and number_of_enters < 2)
+        #         or (self._show_morse_code is False and number_of_enters < 2)
+        #     ) and (len(output_sequence) > 0 and len(output_sequence) % 65 == 0):
+        #         self._output_sequence += "\n"
+        #         self._enter_count += 1
         self._output_sequence += text
         if len(self._output_sequence) > 0 and len(self._output_sequence) % 65 == 0:
+            # number_of_enters = self.get_number_of_enters()
+            # if (self._show_morse_code is True and number_of_enters < 10) or (
+            #     self._show_morse_code is False and number_of_enters < 20
+            # ):
             self._output_sequence += "\n"
             self._enter_count += 1
 
@@ -187,7 +229,10 @@ class HeadbandInput:
             self.add_to_output_sequence("~")
         self._pause_units = 0
         current_page.update_next_action_label(
-            len(self._clenching_sequence), self._selected_mode, self._copy_mode
+            len(self._clenching_sequence),
+            self._selected_mode,
+            self._copy_mode,
+            self._show_morse_code,
         )
 
     def handle_extra_commands(self, clenching_sequence_length, current_page):
@@ -219,7 +264,7 @@ class HeadbandInput:
         elif clenching_sequence_length >= 10 and clenching_sequence_length <= 11:
             current_page.update_selected_mode()
         elif clenching_sequence_length >= 12 and clenching_sequence_length <= 13:
-            current_page.hide_show_morse_code()
+            current_page.hide_show_morse_code(self._show_morse_code)
         elif clenching_sequence_length >= 14 and clenching_sequence_length <= 15:
             current_page.open_tutorial_page()
         elif clenching_sequence_length >= 16 and clenching_sequence_length <= 20:

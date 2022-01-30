@@ -1,6 +1,9 @@
 from headband_connection import HeadbandConnection
 
 import tkinter as tk
+import constants
+import threading
+import time
 
 from first_page import FirstPage
 from headband_input import HeadbandInput
@@ -16,6 +19,37 @@ class Main(tk.Tk):
     frame_width = 800
     frame_height = 600
 
+    def handle_battery_value(self, value):
+        self.battery_label.config(text=f" {int(value/100)}% ")
+
+    def listen_for_battery(self):
+        self.headband_connection.listen_for_battery(self.handle_battery_value)
+
+    def listen_for_battery_thread(self):
+        self.battery_thread = threading.Thread(target=self.listen_for_battery, args=())
+        self.battery_thread.start()
+
+    def handle_connection_values(self, values):
+        connection_value = sum(values)
+        connection_text = ""
+        if connection_value >= 2.0 and connection_value < 4.0:
+            connection_text = f" Connection: Good "
+        elif connection_value >= 4.0 and connection_value < 8.0:
+            connection_text = f" Connection: Medium "
+        elif connection_value >= 8.0:
+            connection_text = f" Connection: Bad "
+
+        self.connection_label.config(text=connection_text)
+
+    def listen_for_connection(self):
+        self.headband_connection.listen_for_connection(self.handle_connection_values)
+
+    def listen_for_connection_thread(self):
+        self.connection_thread = threading.Thread(
+            target=self.listen_for_connection, args=()
+        )
+        self.connection_thread.start()
+
     def __init__(self, ip, port, *args, **kwargs):
         tk.Tk.__init__(self, *args, **kwargs)
 
@@ -28,6 +62,22 @@ class Main(tk.Tk):
         main_frame.pack(side="top", fill="both", expand=True)
         main_frame.grid_rowconfigure(0, weight=1)
         main_frame.grid_columnconfigure(0, weight=1)
+
+        self.battery_label = tk.Label(
+            self,
+            text=" - % ",
+            font=constants.LABEL_FONT_VERY_SMALL_BOLD,
+            bg=constants.BACKGROUND_COLOUR,
+            borderwidth=1,
+            relief="solid",
+        )
+
+        self.connection_label = tk.Label(
+            self,
+            text="",
+            font=constants.LABEL_FONT_VERY_SMALL_BOLD,
+            bg=constants.BACKGROUND_COLOUR,
+        )
 
         self.frames = {}
         for frame in (
@@ -45,7 +95,7 @@ class Main(tk.Tk):
             page_frame.grid(row=0, column=0, sticky="nsew")
 
         # Show the first page
-        self.show_frame(FirstPage)
+        self.show_frame(SeventhPage)
 
     def show_frame(self, page):
         """Show a frame for the given page name"""
@@ -53,9 +103,15 @@ class Main(tk.Tk):
         frame.tkraise()
         frame.start_threads()
 
+        if page == SecondPage:
+            self.battery_label.place(relx=0.01, rely=0.98, anchor="sw")
+            self.connection_label.place(relx=0.99, rely=0.98, anchor="se")
+            self.listen_for_battery_thread()
+            self.listen_for_connection_thread()
+
 
 if __name__ == "__main__":
-    main = Main("192.168.188.41", 5000)
+    main = Main("192.168.188.36", 5000)
     main.lift()
     main.attributes("-topmost", True)
     main.mainloop()

@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import IntVar, ttk
+from tkinter import BOTTOM, IntVar, ttk
 from tkinter import font as tkfont
 from tkinter.constants import DISABLED, HORIZONTAL, LEFT, SE, TOP
 
@@ -84,9 +84,14 @@ class FifthPage(tk.Frame):
             relief="solid",
         )
 
+        self.selected_mode_frame = self.generate_selected_mode_frame(middle_frame)
+
         self.middle_label_1.pack(ipadx=15, ipady=10)
         self.middle_label_2.pack(pady=(15, 0), ipadx=15, ipady=10)
         self.middle_label_3.pack(pady=(15, 0), ipadx=15, ipady=10)
+
+        self.selected_mode_frame.pack(pady=(30, 0))
+
         return middle_frame
 
     def generate_bottom_frame(self):
@@ -95,16 +100,12 @@ class FifthPage(tk.Frame):
         self.action_label = tk.Label(
             bottom_frame,
             text="Action: None",
-            font=constants.LABEL_FONT,
+            font=constants.LABEL_FONT_SMALL_BOLD,
             bg=constants.BACKGROUND_COLOUR,
             fg=constants.BACKGROUND_COLOUR,
         )
 
-        self.selected_mode_frame = self.generate_selected_mode_frame(bottom_frame)
-
-        self.selected_mode_frame.pack()
-
-        self.action_label.pack(pady=(20, 0))
+        self.action_label.pack(side=BOTTOM)
         return bottom_frame
 
     def hide_action_label(self):
@@ -126,19 +127,19 @@ class FifthPage(tk.Frame):
     def open_tutorial_page(self):
         self.headband_connection.unmap_listen_for_input()
         self.controller.show_frame(SixthPage)
-        self.action_label.config(text="Action: None", fg=constants.BACKGROUND_COLOUR)
+        self.hide_action_label()
 
     def update_selected_mode(self):
         self.headband_input.change_selected_mode()
         selected_mode = self.headband_input.get_selected_mode()
         self.selected_mode_label.config(text=selected_mode)
-        self.action_label.config(text="Action: None", fg=constants.BACKGROUND_COLOUR)
+        self.hide_action_label()
 
     def go_to_next_page(self):
         self.headband_connection.unmap_listen_for_input()
         self.headband_input.set_writing_started()
         self.controller.show_frame(SeventhPage)
-        self.action_label.config(text="Action: None", fg=constants.BACKGROUND_COLOUR)
+        self.hide_action_label()
 
     def clench_handler(self, input_list):
         self.headband_input.handle_input(input_list, self)
@@ -163,7 +164,7 @@ class FifthPage(tk.Frame):
 
         self.upper_frame.grid(row=0, column=0, columnspan=3)
         self.middle_frame.grid(row=1, column=0, columnspan=3)
-        self.bottom_frame.grid(row=2, column=0, columnspan=3)
+        self.bottom_frame.grid(row=2, column=0, columnspan=3, sticky="ns", pady=(0, 10))
 
     def start_threads(self):
         self.listen_for_clenching_thread()

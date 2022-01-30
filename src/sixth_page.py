@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk
+from tkinter import BOTTOM, ttk
 from tkinter import font as tkfont
 from tkinter.constants import HORIZONTAL, LEFT, TOP
 
@@ -93,10 +93,10 @@ class SixthPage(tk.Frame):
         self.text_label_lower = tk.Label(
             bottom_frame,
             text="Clench to go back",
-            font=constants.LABEL_FONT_BOLD,
+            font=constants.LABEL_FONT_SMALL_BOLD,
             bg=constants.BACKGROUND_COLOUR,
         )
-        self.text_label_lower.pack(side=TOP, anchor="w")
+        self.text_label_lower.pack(side=BOTTOM)
         return bottom_frame
 
     def start_clench_detection_check(self):
@@ -134,7 +134,7 @@ class SixthPage(tk.Frame):
 
         self.upper_frame.grid(row=0, column=0, columnspan=3)
         self.middle_frame.grid(row=1, column=0, columnspan=3)
-        self.bottom_frame.grid(row=2, column=0, columnspan=3)
+        self.bottom_frame.grid(row=2, column=0, columnspan=3, sticky="ns", pady=(0, 10))
 
     def start_threads(self):
         self.clench_detection_thread()
