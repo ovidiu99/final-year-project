@@ -8,6 +8,8 @@ LABEL_FONT = ("Helvetica", 24)
 LABEL_FONT_BOLD = ("Helvetica", 24, "bold")
 LABEL_FONT_SMALL = ("Helvetica", 20)
 LABEL_FONT_SMALL_BOLD = ("Helvetica", 20, "bold")
+LABEL_FONT_VERY_SMALL = ("Helvetica", 14)
+LABEL_FONT_VERY_SMALL_BOLD = ("Helvetica", 14, "bold")
 
 # MORSE CODE DICTIONARY
 MORSE_CODE = {
@@ -47,8 +49,16 @@ MORSE_CODE = {
     "---..": "8",
     "----.": "9",
     "-----": "0",
-    "-.-.-1": "-",
-    "-.-.-2": "!",
-    "-.-.-3": ".",
-    "-.-.-4": ",",
+    "..--..": "?",
+    "-.-.--": "!",
+    ".-.-.-": ".",
+    "--..--": ",",
+    "-.--.": "(",
+    "-.--.-": ")",
+    "---...": ":",
+    "-.-.-.": ";",
+    "-...-": "=",
+    ".-.-.": "+",
+    "-....-": "-",
+    ".-..-.": '"',
 }

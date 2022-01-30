@@ -11,8 +11,6 @@ from sixth_page import SixthPage
 
 
 class SeventhPage(tk.Frame):
-    _show_morse_code = False
-
     def initialize_grid(self):
         rows = 3
         columns = 3
@@ -116,11 +114,11 @@ class SeventhPage(tk.Frame):
             symbol = constants.MORSE_CODE[key]
             symbol_label = tk.Label(
                 morse_code_alphabet_frame,
-                text=f"{symbol} : {key}",
-                font=constants.LABEL_FONT,
+                text=f"{symbol}  {key}",
+                font=constants.LABEL_FONT_SMALL,
                 bg=constants.BACKGROUND_COLOUR,
             )
-            symbol_label.grid(row=row, column=column, padx=(8, 8), pady=(0, 10))
+            symbol_label.grid(row=row, column=column, padx=(16, 16), pady=(0, 5))
             if (index + 1) % 8 == 0:
                 row += 1
                 column = 0
@@ -175,7 +173,9 @@ class SeventhPage(tk.Frame):
     def show_action_label(self, text):
         self.action_label.config(text=text, fg="black", relief="solid")
 
-    def update_next_action_label(self, clench_length, selected_mode, copy_mode=False):
+    def update_next_action_label(
+        self, clench_length, selected_mode, copy_mode, show_morse_code
+    ):
         if copy_mode is True:
             if clench_length == 1:
                 self.show_action_label("Action: Click")
@@ -203,7 +203,7 @@ class SeventhPage(tk.Frame):
                 self.show_action_label("Action: Change mode")
             elif clench_length >= 12 and clench_length <= 13:
                 text = "Action: Show morse code"
-                if self._show_morse_code is True:
+                if show_morse_code is True:
                     text = "Action: Hide morse code"
                 self.show_action_label(text)
             elif clench_length >= 14 and clench_length <= 15:
@@ -218,12 +218,12 @@ class SeventhPage(tk.Frame):
         selected_mode = self.headband_input.get_selected_mode()
         self.selected_mode_label.config(text=selected_mode)
 
-    def hide_show_morse_code(self):
-        if self._show_morse_code is True:
+    def hide_show_morse_code(self, show_morse_code):
+        if show_morse_code is True:
             self.morse_code_alphabet_frame.pack_forget()
         else:
             self.morse_code_alphabet_frame.pack(side=BOTTOM)
-        self._show_morse_code = not self._show_morse_code
+        self.headband_input.set_show_morse_code(not show_morse_code)
 
     def open_tutorial_page(self):
         self.headband_connection.unmap_listen_for_input()
@@ -302,7 +302,8 @@ class SeventhPage(tk.Frame):
 
     def start_threads(self):
         selected_mode = self.headband_input.get_selected_mode()
+        self.selected_mode_label.config(text=selected_mode)
         if selected_mode == "Beginner":
-            self._show_morse_code = True
+            self.headband_input.set_show_morse_code(True)
             self.morse_code_alphabet_frame.pack(side=BOTTOM)
         self.listen_for_input_thread()

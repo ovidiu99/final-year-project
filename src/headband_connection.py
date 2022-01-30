@@ -58,6 +58,12 @@ class HeadbandConnection:
     def listen_for_head_movement_handler(self, address: str, *args):
         self._listen_for_head_movement_action([args[1], args[2]])
 
+    def listen_for_battery_handler(self, address: str, *args):
+        self._listen_for_battery(args[0])
+
+    def listen_for_connection_handler(self, address: str, *args):
+        self._listen_for_connection([args[1], args[2]])
+
     # UNMAPPINGS
     def unmap_blink_twice_detection(self):
         self.dispatcher.unmap("/muse/elements/blink", self.record_blink_twice_handler)
@@ -73,6 +79,14 @@ class HeadbandConnection:
 
     def unmap_listen_for_head_movement(self):
         self.dispatcher.unmap("/muse/gyro", self.listen_for_head_movement_handler)
+
+    def unmap_listen_for_battery(self):
+        self.dispatcher.unmap("/muse/batt", self.listen_for_battery_handler)
+
+    def unmap_listen_for_connection(self):
+        self.dispatcher.unmap(
+            "/muse/elements/horseshoe", self.listen_for_connection_handler
+        )
 
     # ACTIONS
     def connection_check(self, trigger_function=None):
@@ -102,3 +116,13 @@ class HeadbandConnection:
         self._listen_for_head_movement_action = trigger_function
         self.headband_input.reinitialize_head_movement_timer()
         self.dispatcher.map("/muse/gyro", self.listen_for_head_movement_handler)
+
+    def listen_for_battery(self, trigger_function):
+        self._listen_for_battery = trigger_function
+        self.dispatcher.map("/muse/batt", self.listen_for_battery_handler)
+
+    def listen_for_connection(self, trigger_function):
+        self._listen_for_connection = trigger_function
+        self.dispatcher.map(
+            "/muse/elements/horseshoe", self.listen_for_connection_handler
+        )
