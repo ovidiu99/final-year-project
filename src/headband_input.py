@@ -180,6 +180,14 @@ class HeadbandInput:
     def get_number_of_enters(self):
         return self._output_sequence.count("\n")
 
+    def get_text_after_last_enter(self, text):
+        text_length = len(text)
+        reversed_text = text[::-1]
+        enter_in_reversed_text = reversed_text.index("\n")
+        last_enter_index = text_length - 1 - enter_in_reversed_text
+        text_after_last_enter = text[-(len(text) - last_enter_index - 1) :]
+        return text_after_last_enter
+
     def get_show_morse_code(self):
         return self._show_morse_code
 
@@ -187,41 +195,34 @@ class HeadbandInput:
         self._show_morse_code = value
 
     def add_to_output_sequence(self, text):
-        # output_sequence = self.get_output_sequence_without_enters()
-        # number_of_enters = self.get_number_of_enters()
-        # print(f"self output - {self._output_sequence}")
-        # print(f"output_sequence - {output_sequence}")
-        # print(f"number_of_enters - {number_of_enters}")
-        # print(f"len(output_sequence) % 65 == 0 - {len(output_sequence) % 65 == 0}")
-        # print(f"len(output_sequence) >0 - {len(output_sequence) > 0}")
-        # print(
-        #     f"(self._show_morse_code is True and number_of_enters < 2) - {(self._show_morse_code is True and number_of_enters < 2)}"
-        # )
-        # print(
-        #     f"or (self._show_morse_code is False and number_of_enters < 2) - {(self._show_morse_code is False and number_of_enters < 2)}"
-        # )
+        number_of_enters = self.get_number_of_enters()
+        text_after_last_enter = self._output_sequence
+        if "\n" in text_after_last_enter:
+            text_after_last_enter = self.get_text_after_last_enter(
+                self._output_sequence
+            )
         # if not (
         #     (
         #         (self._show_morse_code is True and number_of_enters == 2)
-        #         or (self._show_morse_code is False and number_of_enters == 2)
+        #         or (self._show_morse_code is False and number_of_enters == 4)
         #     )
-        #     and (len(output_sequence) > 0 and len(output_sequence) % 65 == 0)
+        #     and (len(self._output_sequence) > 0 and len(text_after_last_enter) == 5)
         # ):
-        #     self._output_sequence += text
         #     if (
         #         (self._show_morse_code is True and number_of_enters < 2)
-        #         or (self._show_morse_code is False and number_of_enters < 2)
-        #     ) and (len(output_sequence) > 0 and len(output_sequence) % 65 == 0):
-        #         self._output_sequence += "\n"
+        #         or (self._show_morse_code is False and number_of_enters < 4)
+        #     ) and (len(self._output_sequence) > 0 and len(text_after_last_enter) == 5):
+        #         self._output_sequence += "\n"NT
         #         self._enter_count += 1
-        self._output_sequence += text
-        if len(self._output_sequence) > 0 and len(self._output_sequence) % 65 == 0:
+        #     self._output_sequence += text
+        if len(self._output_sequence) > 0 and len(text_after_last_enter) == 5:
             # number_of_enters = self.get_number_of_enters()
             # if (self._show_morse_code is True and number_of_enters < 10) or (
             #     self._show_morse_code is False and number_of_enters < 20
             # ):
             self._output_sequence += "\n"
             self._enter_count += 1
+        self._output_sequence += text
 
     def handle_unit_clenches_seventh_page(self, current_page):
         self._clenching_sequence.append(1)
@@ -285,8 +286,15 @@ class HeadbandInput:
     def handle_add_symbol(self):
         symbol = None
         sequence = self._dots_lines_sequence
+        number_of_enters = 0
+        if (
+            len(self._output_sequence) > len(sequence)
+            and "\n" in self._output_sequence[-(len(sequence)) :]
+        ):
+            number_of_enters = self._output_sequence[-(len(sequence)) :].count("\n")
+
         self._output_sequence = self.trim_string(
-            self._output_sequence, len(sequence) + self._enter_count
+            self._output_sequence, len(sequence) + number_of_enters
         )
         if sequence in MORSE_CODE.keys():
             symbol = MORSE_CODE[sequence]
@@ -305,6 +313,7 @@ class HeadbandInput:
             self.handle_lines_and_dots(clenching_sequence_length)
         elif self._pause_units == 3 and self._dots_lines_sequence != "":
             self.handle_add_symbol()
+
         self._clenching_sequence = []
         self._enter_count = 0
 
