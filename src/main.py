@@ -3,7 +3,7 @@ from headband_connection import HeadbandConnection
 import tkinter as tk
 import constants
 import threading
-import time
+import socket
 
 from first_page import FirstPage
 from headband_input import HeadbandInput
@@ -95,7 +95,7 @@ class Main(tk.Tk):
             page_frame.grid(row=0, column=0, sticky="nsew")
 
         # Show the first page
-        self.show_frame(SeventhPage)
+        self.show_frame(FirstPage)
 
     def show_frame(self, page):
         """Show a frame for the given page name"""
@@ -110,8 +110,14 @@ class Main(tk.Tk):
             self.listen_for_connection_thread()
 
 
+def get_ip_address():
+    ip = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    ip.connect(("8.8.8.8", 80))
+    return ip.getsockname()[0]
+
+
 if __name__ == "__main__":
-    main = Main("192.168.188.36", 5000)
+    main = Main(get_ip_address(), 5000)
     main.lift()
     main.attributes("-topmost", True)
     main.mainloop()

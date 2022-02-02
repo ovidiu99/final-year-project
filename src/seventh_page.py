@@ -229,14 +229,6 @@ class SeventhPage(tk.Frame):
         self.headband_connection.unmap_listen_for_input()
         self.controller.show_frame(SixthPage)
 
-    def get_text_after_last_enter(self, text):
-        text_length = len(text)
-        reversed_text = text[::-1]
-        enter_in_reversed_text = reversed_text.index("\n")
-        last_enter_index = text_length - 1 - enter_in_reversed_text
-        text_after_last_enter = text[-(len(text) - last_enter_index - 1) :]
-        return text_after_last_enter
-
     def update_text_label(self, text):
         self.text_label.config(text=text)
         if len(text) == 0:
@@ -244,7 +236,9 @@ class SeventhPage(tk.Frame):
         else:
             text_after_last_enter = text
             if "\n" in text:
-                text_after_last_enter = self.get_text_after_last_enter(text)
+                text_after_last_enter = self.headband_input.get_text_after_last_enter(
+                    text
+                )
             self.current_possition_label_up.config(
                 text=text[: len(text_after_last_enter) - 1]
             )
