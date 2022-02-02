@@ -55,11 +55,17 @@ class HeadbandInput:
     def save_eeg_calm_state_values(self, eeg_list):
         self._eeg_calm_state_values.append(eeg_list)
 
+    def reinitialize_eeg_calm_state_values(self):
+        self._eeg_calm_state_values = []
+
     def get_eeg_calm_state_values(self):
         return self._eeg_calm_state_values
 
     def save_eeg_clenching_state_values(self, eeg_list):
         self._eeg_clenching_state_values.append(eeg_list)
+
+    def reinitialize_eeg_clenching_state_values(self):
+        self._eeg_clenching_state_values = []
 
     def get_eeg_clenching_state_values(self):
         return self._eeg_clenching_state_values

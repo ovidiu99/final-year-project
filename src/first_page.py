@@ -43,8 +43,17 @@ class FirstPage(tk.Frame):
             length=150,
             mode="indeterminate",
         )
-        self.progress_bar.pack(pady=(10, 0))
+        self.progress_bar.pack(pady=(25, 0))
         self.progress_bar.start(20)
+
+        self.blink_label = tk.Label(
+            middle_frame,
+            text="Blink twice to continue.",
+            font=constants.LABEL_FONT_BOLD,
+            bg=constants.BACKGROUND_COLOUR,
+            borderwidth=2,
+            relief="solid",
+        )
 
         return middle_frame
 
@@ -59,7 +68,7 @@ class FirstPage(tk.Frame):
         time.sleep(0.5)
         self.progress_bar.pack_forget()
         self.connect_label.config(text="Headband connected!")
-        self.blink_label.pack(pady=(10, 0))
+        self.blink_label.pack(pady=(25, 0), ipadx=(5))
         self.controller.headband_connection.blink_twice_detection(self.blink_detected)
 
     def connection_check_thread(self):
@@ -96,13 +105,6 @@ class FirstPage(tk.Frame):
 
         self.middle_frame = self.generate_middle_frame()
         self.middle_frame.grid(row=1, column=0, columnspan=3)
-
-        self.blink_label = tk.Label(
-            self.middle_frame,
-            text="Everything ready! Blink twice to continue.",
-            font=constants.LABEL_FONT_BOLD,
-            bg=constants.BACKGROUND_COLOUR,
-        )
 
     def start_threads(self):
         self.connection_check_thread()

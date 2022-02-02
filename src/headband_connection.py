@@ -67,6 +67,9 @@ class HeadbandConnection:
     # UNMAPPINGS
     def unmap_blink_twice_detection(self):
         self.dispatcher.unmap("/muse/elements/blink", self.record_blink_twice_handler)
+    
+    def unmap_clench_detection(self):
+        self.dispatcher.unmap("/muse/elements/jaw_clench", self.record_clench_handler)
 
     def unmap_record_normal_state(self):
         self.dispatcher.unmap("/muse/eeg", self.record_normal_state_handler)
