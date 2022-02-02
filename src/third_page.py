@@ -22,19 +22,39 @@ class ThirdPage(tk.Frame):
         middle_frame = tk.Frame(self, bg=constants.BACKGROUND_COLOUR)
         self.label = tk.Label(
             middle_frame,
-            text="The application will now record your head activity\nfor 5 seconds, while clenching your jaw.\n",
+            text="The application will now record your head activity\nfor 5 seconds, while clenching your jaw.",
             font=constants.LABEL_FONT,
             bg=constants.BACKGROUND_COLOUR,
         )
         self.label.pack()
+
+        self.blink_label = tk.Label(
+            middle_frame,
+            text="Blink twice to continue",
+            font=constants.LABEL_FONT_BOLD,
+            bg=constants.BACKGROUND_COLOUR,
+            borderwidth=2,
+            relief="solid",
+        )
 
         self.clench_label = tk.Label(
             middle_frame,
             text="Clench (and hold) your jaw to start recording",
             font=constants.LABEL_FONT_BOLD,
             bg=constants.BACKGROUND_COLOUR,
+            borderwidth=2,
+            relief="solid",
         )
-        self.clench_label.pack(pady=(10, 0))
+        self.clench_label.pack(pady=(25, 0), ipadx=(5))
+
+        self.clench_to_re_record_label = tk.Label(
+            middle_frame,
+            text="Clench once to re-record",
+            font=constants.LABEL_FONT_BOLD,
+            bg=constants.BACKGROUND_COLOUR,
+            borderwidth=2,
+            relief="solid",
+        )
 
         s = ttk.Style()
         s.theme_use("clam")
@@ -56,22 +76,24 @@ class ThirdPage(tk.Frame):
 
         return middle_frame
 
-    def start_clench_detection_check(self):
+    def start_clench_detection_check(self, clench_detected_function_name):
+        function = self.clench_detected_functions_mapping[clench_detected_function_name]
         time.sleep(0.5)
-        self.headband_connection.clench_detection(self.clench_detected)
+        self.headband_connection.clench_detection(function)
 
     def start_blink_twice_detection_check(self):
         time.sleep(0.5)
         self.headband_connection.blink_twice_detection(self.blink_detected)
 
     def record_clenching_state(self):
+        self.headband_input.reinitialize_eeg_clenching_state_values()
         self.update_progress_bar_thread()
         self.headband_connection.record_clenching_state()
 
-    def clench_detection_thread(self):
+    def clench_detection_thread(self, clench_detected_function_name="start_recording"):
         self.clench_thread = threading.Thread(
             target=self.start_clench_detection_check,
-            args=(),
+            args=(clench_detected_function_name,),
         )
         self.clench_thread.start()
 
@@ -87,21 +109,31 @@ class ThirdPage(tk.Frame):
         )
         self.record_clenching_thread.start()
 
-    def clench_detected(self):
+    def clench_to_start_recording_detected(self):
         self.clench_label.pack_forget()
-        self.progress_bar.pack(pady=(15, 0))
+        self.progress_bar.pack(pady=(25, 0))
         self.record_clenching_state_thread()
 
+    def clench_to_re_record_detected(self):
+        self.headband_connection.unmap_blink_twice_detection()
+        self.clench_to_re_record_label.pack_forget()
+        self.blink_label.pack_forget()
+        self.clench_label.pack(pady=(25, 0), ipadx=(5))
+        self.progress_bar["value"] = 0
+        self.clench_detection_thread()
+
     def blink_detected(self):
+        self.headband_connection.unmap_clench_detection()
         self.controller.show_frame(FourthPage)
 
     def record_clenching_state_finished(self):
         self.headband_connection.unmap_record_clenching_state()
         time.sleep(1)
         self.progress_bar.pack_forget()
-        self.clench_label.config(text="Blink twice to continue")
-        self.clench_label.pack(pady=(10, 0))
+        self.blink_label.pack(pady=(25, 0), ipadx=(5))
+        self.clench_to_re_record_label.pack(pady=(15, 0), ipadx=(5))
         self.blink_twice_detection_thread()
+        self.clench_detection_thread("re_record")
 
     def update_progress_bar(self):
         for i in range(1, 6):
@@ -125,6 +157,11 @@ class ThirdPage(tk.Frame):
 
         self.middle_frame = self.generate_middle_frame()
         self.middle_frame.grid(row=1, column=0, columnspan=3)
+
+        self.clench_detected_functions_mapping = {
+            "start_recording": self.clench_to_start_recording_detected,
+            "re_record": self.clench_to_re_record_detected,
+        }
 
     def start_threads(self):
         self.clench_detection_thread()

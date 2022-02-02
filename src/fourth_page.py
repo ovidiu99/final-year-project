@@ -45,7 +45,7 @@ class FourthPage(tk.Frame):
             length=150,
             mode="indeterminate",
         )
-        self.progress_bar.pack(pady=(10, 0))
+        self.progress_bar.pack(pady=(25, 0))
         self.progress_bar.start(20)
 
         return middle_frame
