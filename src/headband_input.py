@@ -33,7 +33,6 @@ class HeadbandInput:
     _writing_started = False
 
     _input_timer = time.time()
-    _head_movement_timer = time.time()
 
     _enter_count = 0
 
@@ -170,9 +169,6 @@ class HeadbandInput:
 
     def reinitialize_input_timer(self):
         self._input_timer = time.time()
-
-    def reinitialize_head_movement_timer(self):
-        self._head_movement_timer = time.time()
 
     def trim_string(self, string, numer_of_chars):
         return string[: len(string) - numer_of_chars]
