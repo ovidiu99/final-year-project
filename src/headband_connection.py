@@ -15,6 +15,7 @@ class HeadbandConnection:
         self.port = port
         self.controller = controller
         self.headband_input = self.controller.headband_input
+
         self.dispatcher = dispatcher.Dispatcher()
         self.server = osc_server.ThreadingOSCUDPServer(
             (self.ip, self.port), self.dispatcher

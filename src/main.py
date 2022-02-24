@@ -56,6 +56,7 @@ class Main(tk.Tk):
         self.headband_input = HeadbandInput()
         self.headband_connection = HeadbandConnection(self, ip, port)
 
+        self.title("Head Writer")
         self.geometry(f"{self.frame_width}x{self.frame_height}")
 
         main_frame = tk.Frame(self)
