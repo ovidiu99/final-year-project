@@ -217,7 +217,7 @@ class HeadbandInput:
         #         self._output_sequence += "\n"NT
         #         self._enter_count += 1
         #     self._output_sequence += text
-        if len(self._output_sequence) > 0 and len(text_after_last_enter) == 5:
+        if len(self._output_sequence) > 0 and len(text_after_last_enter) == 64:
             # number_of_enters = self.get_number_of_enters()
             # if (self._show_morse_code is True and number_of_enters < 10) or (
             #     self._show_morse_code is False and number_of_enters < 20

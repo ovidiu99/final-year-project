@@ -22,7 +22,7 @@ class FourthPage(tk.Frame):
         middle_frame = tk.Frame(self, bg=constants.BACKGROUND_COLOUR)
         self.label = tk.Label(
             middle_frame,
-            text="Analyzing the recorded values...",
+            text="Analysing the recorded values...",
             font=constants.LABEL_FONT,
             bg=constants.BACKGROUND_COLOUR,
         )
@@ -50,7 +50,7 @@ class FourthPage(tk.Frame):
 
         return middle_frame
 
-    def analyze_values(self):
+    def analyse_values(self):
         self.timer = time.time()
         self.headband_input.calculate_average_calm_state_difference()
         self.headband_input.calculate_average_clenching_state_difference()
@@ -59,9 +59,9 @@ class FourthPage(tk.Frame):
         self.progress_bar.pack_forget()
         self.controller.show_frame(FifthPage)
 
-    def analyze_values_thread(self):
-        self.analyze_thread = threading.Thread(target=self.analyze_values, args=())
-        self.analyze_thread.start()
+    def analyse_values_thread(self):
+        self.analyse_thread = threading.Thread(target=self.analyse_values, args=())
+        self.analyse_thread.start()
 
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent, bg=constants.BACKGROUND_COLOUR)
@@ -73,4 +73,4 @@ class FourthPage(tk.Frame):
         self.middle_frame.grid(row=1, column=0, columnspan=3)
 
     def start_threads(self):
-        self.analyze_values_thread()
+        self.analyse_values_thread()

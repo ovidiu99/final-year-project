@@ -48,7 +48,7 @@ class FirstPage(tk.Frame):
 
         self.blink_label = tk.Label(
             middle_frame,
-            text="Blink twice to continue.",
+            text="Blink twice to continue",
             font=constants.LABEL_FONT_BOLD,
             bg=constants.BACKGROUND_COLOUR,
             borderwidth=2,
