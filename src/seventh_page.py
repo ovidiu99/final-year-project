@@ -174,7 +174,12 @@ class SeventhPage(tk.Frame):
         self.action_label.config(text=text, fg="black", relief="solid")
 
     def update_next_action_label(
-        self, clench_length, selected_mode, copy_mode, show_morse_code
+        self,
+        clench_length,
+        selected_mode,
+        copy_mode,
+        show_morse_code,
+        only_dots_and_lines,
     ):
         if copy_mode is True:
             if clench_length == 1:
@@ -192,26 +197,29 @@ class SeventhPage(tk.Frame):
                 self.show_action_label("Action: Dot")
             elif clench_length >= 2 and clench_length <= 4:
                 self.show_action_label("Action: Line")
-            elif clench_length >= 5 and clench_length <= 7:
-                if selected_mode == "Beginner":
-                    self.show_action_label("Action: Space")
-                elif selected_mode == "Advanced":
-                    self.hide_action_label()
-            elif clench_length >= 8 and clench_length <= 9:
-                self.show_action_label("Action: Delete last character")
-            elif clench_length >= 10 and clench_length <= 11:
-                self.show_action_label("Action: Change mode")
-            elif clench_length >= 12 and clench_length <= 13:
-                text = "Action: Show morse code"
-                if show_morse_code is True:
-                    text = "Action: Hide morse code"
-                self.show_action_label(text)
-            elif clench_length >= 14 and clench_length <= 15:
-                self.show_action_label("Action: Open tutorial page")
-            elif clench_length >= 16 and clench_length <= 20:
-                self.show_action_label("Action: Open copy mode")
-            elif clench_length > 20:
+            elif only_dots_and_lines and clench_length > 4:
                 self.hide_action_label()
+            elif not only_dots_and_lines:
+                if clench_length >= 5 and clench_length <= 7:
+                    if selected_mode == "Beginner":
+                        self.show_action_label("Action: Space")
+                    elif selected_mode == "Advanced":
+                        self.hide_action_label()
+                elif clench_length >= 8 and clench_length <= 9:
+                    self.show_action_label("Action: Delete last character")
+                elif clench_length >= 10 and clench_length <= 11:
+                    self.show_action_label("Action: Change mode")
+                elif clench_length >= 12 and clench_length <= 13:
+                    text = "Action: Show morse code"
+                    if show_morse_code is True:
+                        text = "Action: Hide morse code"
+                    self.show_action_label(text)
+                elif clench_length >= 14 and clench_length <= 15:
+                    self.show_action_label("Action: Open tutorial page")
+                elif clench_length >= 16 and clench_length <= 20:
+                    self.show_action_label("Action: Open copy mode")
+                elif clench_length > 20:
+                    self.hide_action_label()
 
     def update_selected_mode(self):
         self.headband_input.change_selected_mode()

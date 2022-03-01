@@ -36,14 +36,14 @@ class SixthPage(tk.Frame):
             middle_frame,
             text="The application classifies the input from the headband using units, where a unit is"
             + "\n0.25 seconds.",
-            font=constants.LABEL_FONT_SMALL,
+            font=constants.LABEL_FONT_MEDIUM_SMALL,
             bg=constants.BACKGROUND_COLOUR,
             justify=LEFT,
         )
         self.middle_label_2 = tk.Label(
             middle_frame,
-            text="The application has two modes:",
-            font=constants.LABEL_FONT_SMALL,
+            text="The application has two modes of operation:",
+            font=constants.LABEL_FONT_MEDIUM_SMALL,
             bg=constants.BACKGROUND_COLOUR,
             justify=LEFT,
         )
@@ -55,7 +55,7 @@ class SixthPage(tk.Frame):
             + "\n    - The application will automatically try to turn the current dots and lines sequence"
             + "\n      into a symbol after every 0.75 seconds pause"
             + "\n    - To add a space and go to the next word, clench your jaw between 5 and 7 units",
-            font=constants.LABEL_FONT_SMALL,
+            font=constants.LABEL_FONT_MEDIUM_SMALL,
             bg=constants.BACKGROUND_COLOUR,
             justify=LEFT,
         )
@@ -64,7 +64,7 @@ class SixthPage(tk.Frame):
             text="2) Advanced mode:"
             + "\n    - Same as the beginner mode, except the spacing between words will be"
             + "\n      automatically added by the application after 1.75 seconds",
-            font=constants.LABEL_FONT_SMALL,
+            font=constants.LABEL_FONT_MEDIUM_SMALL,
             bg=constants.BACKGROUND_COLOUR,
             justify=LEFT,
         )
@@ -75,16 +75,28 @@ class SixthPage(tk.Frame):
             + "\n    - To change the mode, clench your jaw for 10-11 units"
             + "\n    - To hide/show the morse code alphabet, clench your jaw for 12-13 units"
             + "\n    - To copy the text to another window, clench your jaw for 16-20 units",
-            font=constants.LABEL_FONT_SMALL,
+            font=constants.LABEL_FONT_MEDIUM_SMALL,
+            bg=constants.BACKGROUND_COLOUR,
+            justify=LEFT,
+        )
+        self.middle_label_6 = tk.Label(
+            middle_frame,
+            text="Copy mode:"
+            + "\n    - Clench for 1 unit to for a mouse click"
+            + "\n    - Clench between 2 and 4 units for a mouse double-click"
+            + "\n    - Clench between 5 and 9 units to paste"
+            + "\n    - Clench between 10 and 13 units to close the copy mode",
+            font=constants.LABEL_FONT_MEDIUM_SMALL,
             bg=constants.BACKGROUND_COLOUR,
             justify=LEFT,
         )
 
         self.middle_label_1.pack(side=TOP, anchor="w")
-        self.middle_label_2.pack(pady=(20, 0), side=TOP, anchor="w")
-        self.middle_label_3.pack(pady=(5, 0), side=TOP, anchor="w")
-        self.middle_label_4.pack(pady=(5, 0), side=TOP, anchor="w")
-        self.middle_label_5.pack(pady=(20, 0), side=TOP, anchor="w")
+        self.middle_label_2.pack(pady=(7, 0), side=TOP, anchor="w")
+        self.middle_label_3.pack(pady=(3, 0), side=TOP, anchor="w")
+        self.middle_label_4.pack(pady=(3, 0), side=TOP, anchor="w")
+        self.middle_label_5.pack(pady=(7, 0), side=TOP, anchor="w")
+        self.middle_label_6.pack(pady=(7, 0), side=TOP, anchor="w")
 
         return middle_frame
 

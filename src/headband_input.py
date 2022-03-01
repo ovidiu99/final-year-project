@@ -236,6 +236,7 @@ class HeadbandInput:
             self._selected_mode,
             self._copy_mode,
             self._show_morse_code,
+            self._dots_lines_sequence != "",
         )
 
     def handle_extra_commands(self, clenching_sequence_length, current_page):
@@ -309,7 +310,11 @@ class HeadbandInput:
             self._output_sequence, clenching_sequence_length + self._enter_count
         )
         self._pause_units += 1
-        if self._pause_units == 1 and clenching_sequence_length >= 5:
+        if (
+            self._pause_units == 1
+            and clenching_sequence_length >= 5
+            and self._dots_lines_sequence == ""
+        ):
             self.handle_extra_commands(clenching_sequence_length, current_page)
         elif self._pause_units < 3 and clenching_sequence_length > 0:
             self.handle_lines_and_dots(clenching_sequence_length)
@@ -325,7 +330,11 @@ class HeadbandInput:
             self._output_sequence, clenching_sequence_length + self._enter_count
         )
         self._pause_units += 1
-        if self._pause_units == 1 and clenching_sequence_length > 7:
+        if (
+            self._pause_units == 1
+            and clenching_sequence_length > 7
+            and self._dots_lines_sequence == ""
+        ):
             self.handle_extra_commands(clenching_sequence_length, current_page)
         elif self._pause_units < 3 and clenching_sequence_length > 0:
             self.handle_lines_and_dots(clenching_sequence_length)

@@ -8,6 +8,8 @@ LABEL_FONT = ("Helvetica", 24)
 LABEL_FONT_BOLD = ("Helvetica", 24, "bold")
 LABEL_FONT_SMALL = ("Helvetica", 20)
 LABEL_FONT_SMALL_BOLD = ("Helvetica", 20, "bold")
+LABEL_FONT_MEDIUM_SMALL = ("Helvetica", 18)
+LABEL_FONT_MEDIUM_SMALL_BOLD = ("Helvetica", 18, "bold")
 LABEL_FONT_VERY_SMALL = ("Helvetica", 14)
 LABEL_FONT_VERY_SMALL_BOLD = ("Helvetica", 14, "bold")
 
