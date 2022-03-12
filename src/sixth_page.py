@@ -10,7 +10,7 @@ import constants
 
 
 class SixthPage(tk.Frame):
-    def initialize_grid(self):
+    def initialise_grid(self):
         rows = 3
         columns = 3
         for row in range(rows):
@@ -138,7 +138,7 @@ class SixthPage(tk.Frame):
         self.controller = controller
         self.headband_connection = self.controller.headband_connection
         self.headband_input = self.controller.headband_input
-        self.initialize_grid()
+        self.initialise_grid()
 
         self.upper_frame = self.generate_upper_frame()
         self.middle_frame = self.generate_middle_frame()

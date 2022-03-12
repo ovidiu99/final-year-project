@@ -12,7 +12,7 @@ from sixth_page import SixthPage
 
 
 class FifthPage(tk.Frame):
-    def initialize_grid(self):
+    def initialise_grid(self):
         rows = 3
         columns = 3
         for row in range(rows):
@@ -24,7 +24,7 @@ class FifthPage(tk.Frame):
         upper_frame = tk.Frame(self, bg=constants.BACKGROUND_COLOUR)
         self.upper_label_1 = tk.Label(
             upper_frame,
-            text="The recorded data has been analysed!",
+            text="The recorded data has been analysed",
             font=constants.LABEL_FONT,
             bg=constants.BACKGROUND_COLOUR,
         )
@@ -69,7 +69,7 @@ class FifthPage(tk.Frame):
         )
         self.middle_label_2 = tk.Label(
             middle_frame,
-            text="Clench your jaw for 1 second to change the mode",
+            text="Clench your jaw for 1 to 2 seconds to change the mode",
             font=constants.LABEL_FONT_SMALL_BOLD,
             bg=constants.BACKGROUND_COLOUR,
             borderwidth=2,
@@ -156,7 +156,7 @@ class FifthPage(tk.Frame):
         self.controller = controller
         self.headband_connection = self.controller.headband_connection
         self.headband_input = self.controller.headband_input
-        self.initialize_grid()
+        self.initialise_grid()
 
         self.upper_frame = self.generate_upper_frame()
         self.middle_frame = self.generate_middle_frame()

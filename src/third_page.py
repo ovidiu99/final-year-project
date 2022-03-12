@@ -10,7 +10,7 @@ from fourth_page import FourthPage
 
 
 class ThirdPage(tk.Frame):
-    def initialize_grid(self):
+    def initialise_grid(self):
         rows = 3
         columns = 3
         for row in range(rows):
@@ -86,7 +86,7 @@ class ThirdPage(tk.Frame):
         self.headband_connection.blink_twice_detection(self.blink_detected)
 
     def record_clenching_state(self):
-        self.headband_input.reinitialize_eeg_clenching_state_values()
+        self.headband_input.reinitialise_eeg_clenching_state_values()
         self.update_progress_bar_thread()
         self.headband_connection.record_clenching_state()
 
@@ -117,6 +117,9 @@ class ThirdPage(tk.Frame):
     def clench_to_re_record_detected(self):
         self.headband_connection.unmap_blink_twice_detection()
         self.clench_to_re_record_label.pack_forget()
+        self.label.config(
+            text="The application will now record your head activity\nfor 5 seconds, while clenching your jaw."
+        )
         self.blink_label.pack_forget()
         self.clench_label.pack(pady=(25, 0), ipadx=(5))
         self.progress_bar["value"] = 0
@@ -130,6 +133,9 @@ class ThirdPage(tk.Frame):
         self.headband_connection.unmap_record_clenching_state()
         time.sleep(1)
         self.progress_bar.pack_forget()
+        self.label.config(
+            text="The head activity, while clenching your jaw, was\nsuccessfully recorded"
+        )
         self.blink_label.pack(pady=(25, 0), ipadx=(5))
         self.clench_to_re_record_label.pack(pady=(15, 0), ipadx=(5))
         self.blink_twice_detection_thread()
@@ -153,7 +159,7 @@ class ThirdPage(tk.Frame):
         self.controller = controller
         self.headband_connection = self.controller.headband_connection
         self.headband_input = self.controller.headband_input
-        self.initialize_grid()
+        self.initialise_grid()
 
         self.middle_frame = self.generate_middle_frame()
         self.middle_frame.grid(row=1, column=0, columnspan=3)

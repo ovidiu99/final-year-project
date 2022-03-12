@@ -9,7 +9,7 @@ from second_page import SecondPage
 
 
 class FirstPage(tk.Frame):
-    def initialize_grid(self):
+    def initialise_grid(self):
         rows = 3
         columns = 3
         for row in range(rows):
@@ -67,7 +67,7 @@ class FirstPage(tk.Frame):
     def start_blink_twice_detection_check(self):
         time.sleep(0.5)
         self.progress_bar.pack_forget()
-        self.connect_label.config(text="Headband connected!")
+        self.connect_label.config(text="Headband connected")
         self.blink_label.pack(pady=(25, 0), ipadx=(5))
         self.controller.headband_connection.blink_twice_detection(self.blink_detected)
 
@@ -93,11 +93,11 @@ class FirstPage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent, bg=constants.BACKGROUND_COLOUR)
         self.controller = controller
-        self.initialize_grid()
+        self.initialise_grid()
 
         self.welcome_label = tk.Label(
             self,
-            text="Welcome to Head Writer!",
+            text="Welcome to Head Writer",
             font=constants.TITLE_FONT,
             bg=constants.BACKGROUND_COLOUR,
         )

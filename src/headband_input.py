@@ -10,6 +10,7 @@ import pyautogui
 
 class HeadbandInput:
     _blink_count = 0
+    _last_blink_timer = None
 
     _eeg_calm_state_values = []
     _eeg_clenching_state_values = []
@@ -45,16 +46,25 @@ class HeadbandInput:
     def get_blink_count(self):
         return self._blink_count
 
+    def set_blink_count(self, value):
+        self._blink_count = value
+
     def add_blink_count(self):
         self._blink_count += 1
 
     def clear_blink_count(self):
         self._blink_count = 0
 
+    def get_last_blink_timer(self):
+        return self._last_blink_timer
+
+    def reinitialise_last_blink_timer(self):
+        self._last_blink_timer = time.time()
+
     def save_eeg_calm_state_values(self, eeg_list):
         self._eeg_calm_state_values.append(eeg_list)
 
-    def reinitialize_eeg_calm_state_values(self):
+    def reinitialise_eeg_calm_state_values(self):
         self._eeg_calm_state_values = []
 
     def get_eeg_calm_state_values(self):
@@ -63,7 +73,7 @@ class HeadbandInput:
     def save_eeg_clenching_state_values(self, eeg_list):
         self._eeg_clenching_state_values.append(eeg_list)
 
-    def reinitialize_eeg_clenching_state_values(self):
+    def reinitialise_eeg_clenching_state_values(self):
         self._eeg_clenching_state_values = []
 
     def get_eeg_clenching_state_values(self):
@@ -167,7 +177,7 @@ class HeadbandInput:
             self._average_difference_af8_clenching_state,
         ) = self.calculate_average_difference(self._eeg_clenching_state_values)
 
-    def reinitialize_input_timer(self):
+    def reinitialise_input_timer(self):
         self._input_timer = time.time()
 
     def trim_string(self, string, numer_of_chars):
