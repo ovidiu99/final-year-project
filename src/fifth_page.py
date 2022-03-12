@@ -1,12 +1,9 @@
 import tkinter as tk
-from tkinter import BOTTOM, IntVar, ttk
-from tkinter import font as tkfont
-from tkinter.constants import DISABLED, HORIZONTAL, LEFT, SE, TOP
-
 import threading
-import time
-
 import constants
+
+from tkinter import BOTTOM
+
 from seventh_page import SeventhPage
 from sixth_page import SixthPage
 

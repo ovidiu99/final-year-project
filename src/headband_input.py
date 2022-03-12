@@ -1,11 +1,8 @@
 import time
-
+import pyautogui
 import pyperclip
 
 from constants import MORSE_CODE
-from fifth_page import FifthPage
-from seventh_page import SeventhPage
-import pyautogui
 
 
 class HeadbandInput:
@@ -193,11 +190,13 @@ class HeadbandInput:
         return self._output_sequence.count("\n")
 
     def get_text_after_last_enter(self, text):
-        text_length = len(text)
-        reversed_text = text[::-1]
-        enter_in_reversed_text = reversed_text.index("\n")
-        last_enter_index = text_length - 1 - enter_in_reversed_text
-        text_after_last_enter = text[-(len(text) - last_enter_index - 1) :]
+        text_after_last_enter = text
+        if "\n" in text:
+            text_length = len(text)
+            reversed_text = text[::-1]
+            enter_in_reversed_text = reversed_text.index("\n")
+            last_enter_index = text_length - 1 - enter_in_reversed_text
+            text_after_last_enter = text[-(len(text) - last_enter_index - 1) :]
         return text_after_last_enter
 
     def get_show_morse_code(self):
@@ -206,35 +205,31 @@ class HeadbandInput:
     def set_show_morse_code(self, value):
         self._show_morse_code = value
 
-    def add_to_output_sequence(self, text):
+    def max_characters_not_reached(self):
         number_of_enters = self.get_number_of_enters()
-        text_after_last_enter = self._output_sequence
-        if "\n" in text_after_last_enter:
-            text_after_last_enter = self.get_text_after_last_enter(
-                self._output_sequence
+        text_after_last_enter = self.get_text_after_last_enter(self._output_sequence)
+        return not (
+            (
+                (self._show_morse_code is True and number_of_enters == 10)
+                or (self._show_morse_code is False and number_of_enters == 19)
             )
-        # if not (
-        #     (
-        #         (self._show_morse_code is True and number_of_enters == 2)
-        #         or (self._show_morse_code is False and number_of_enters == 4)
-        #     )
-        #     and (len(self._output_sequence) > 0 and len(text_after_last_enter) == 5)
-        # ):
-        #     if (
-        #         (self._show_morse_code is True and number_of_enters < 2)
-        #         or (self._show_morse_code is False and number_of_enters < 4)
-        #     ) and (len(self._output_sequence) > 0 and len(text_after_last_enter) == 5):
-        #         self._output_sequence += "\n"NT
-        #         self._enter_count += 1
-        #     self._output_sequence += text
-        if len(self._output_sequence) > 0 and len(text_after_last_enter) == 64:
-            # number_of_enters = self.get_number_of_enters()
-            # if (self._show_morse_code is True and number_of_enters < 10) or (
-            #     self._show_morse_code is False and number_of_enters < 20
-            # ):
-            self._output_sequence += "\n"
-            self._enter_count += 1
-        self._output_sequence += text
+            and (len(self._output_sequence) > 0 and len(text_after_last_enter) == 62)
+        )
+
+    def is_new_row_needed(self):
+        number_of_enters = self.get_number_of_enters()
+        text_after_last_enter = self.get_text_after_last_enter(self._output_sequence)
+        return (
+            (self._show_morse_code is True and number_of_enters < 10)
+            or (self._show_morse_code is False and number_of_enters < 19)
+        ) and (len(self._output_sequence) > 0 and len(text_after_last_enter) == 62)
+
+    def add_to_output_sequence(self, text):
+        if self.max_characters_not_reached():
+            if self.is_new_row_needed():
+                self._output_sequence += "\n"
+                self._enter_count += 1
+            self._output_sequence += text
 
     def handle_unit_clenches_seventh_page(self, current_page):
         self._clenching_sequence.append(1)
@@ -316,8 +311,9 @@ class HeadbandInput:
 
     def handle_unit_pauses_beginner_mode(self, current_page):
         clenching_sequence_length = len(self._clenching_sequence)
+        lambdas_sequence_length = self._output_sequence.count("~")
         self._output_sequence = self.trim_string(
-            self._output_sequence, clenching_sequence_length + self._enter_count
+            self._output_sequence, lambdas_sequence_length + self._enter_count
         )
         self._pause_units += 1
         if (
@@ -336,8 +332,9 @@ class HeadbandInput:
 
     def handle_unit_pauses_advanced_mode(self, current_page):
         clenching_sequence_length = len(self._clenching_sequence)
+        lambdas_sequence_length = self._output_sequence.count("~")
         self._output_sequence = self.trim_string(
-            self._output_sequence, clenching_sequence_length + self._enter_count
+            self._output_sequence, lambdas_sequence_length + self._enter_count
         )
         self._pause_units += 1
         if (
