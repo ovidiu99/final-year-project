@@ -1,6 +1,7 @@
 from pythonosc import dispatcher
 from pythonosc import osc_server
 import threading
+import time
 
 
 class HeadbandConnection:
@@ -33,8 +34,23 @@ class HeadbandConnection:
             self._connection_check_action()
 
     def record_blink_twice_handler(self, address: str, *args):
-        self.headband_input.add_blink_count()
-        if self.headband_input.get_blink_count() == 2:
+        blink_count = self.headband_input.get_blink_count()
+        last_blink_timer = self.headband_input.get_last_blink_timer()
+        if blink_count == 0:
+            self.headband_input.add_blink_count()
+
+        # reinitialise the blink count
+        blink_count = self.headband_input.get_blink_count()
+        if blink_count == 1 and last_blink_timer is None:
+            self.headband_input.reinitialise_last_blink_timer()
+        elif blink_count == 1 and time.time() - last_blink_timer <= 1:
+            self.headband_input.add_blink_count()
+        elif blink_count == 1 and time.time() - last_blink_timer > 1:
+            self.headband_input.reinitialise_last_blink_timer()
+
+        # reinitialise the blink count
+        blink_count = self.headband_input.get_blink_count()
+        if blink_count == 2:
             self.headband_input.clear_blink_count()
             self.dispatcher.unmap(
                 "/muse/elements/blink", self.record_blink_twice_handler
@@ -113,7 +129,7 @@ class HeadbandConnection:
 
     def listen_for_input(self, trigger_function):
         self._listen_for_input_action = trigger_function
-        self.headband_input.reinitialize_input_timer()
+        self.headband_input.reinitialise_input_timer()
         self.dispatcher.map("/muse/eeg", self.listen_for_input_handler)
 
     def listen_for_head_movement(self, trigger_function):

@@ -10,7 +10,7 @@ from fifth_page import FifthPage
 
 
 class FourthPage(tk.Frame):
-    def initialize_grid(self):
+    def initialise_grid(self):
         rows = 3
         columns = 3
         for row in range(rows):
@@ -67,7 +67,7 @@ class FourthPage(tk.Frame):
         tk.Frame.__init__(self, parent, bg=constants.BACKGROUND_COLOUR)
         self.controller = controller
         self.headband_input = self.controller.headband_input
-        self.initialize_grid()
+        self.initialise_grid()
 
         self.middle_frame = self.generate_middle_frame()
         self.middle_frame.grid(row=1, column=0, columnspan=3)
