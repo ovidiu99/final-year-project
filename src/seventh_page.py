@@ -258,24 +258,14 @@ class SeventhPage(tk.Frame):
     def listen_for_input(self):
         self.headband_connection.listen_for_input(self.handle_input)
 
-    def listen_for_input_thread(self):
-        self.input_thread = threading.Thread(target=self.listen_for_input, args=())
-        self.input_thread.start()
-
     def handle_head_movement(self, input_list):
         self.headband_input.handle_head_movement(input_list, self)
 
     def listen_for_head_movement(self):
         self.headband_connection.listen_for_head_movement(self.handle_head_movement)
 
-    def listen_for_head_movement_thread(self):
-        self.head_movement_thread = threading.Thread(
-            target=self.listen_for_head_movement, args=()
-        )
-        self.head_movement_thread.start()
-
     def start_copy_mode(self):
-        self.listen_for_head_movement_thread()
+        self.listen_for_head_movement()
 
     def stop_copy_mode(self):
         self.controller.focus_force()
@@ -302,10 +292,10 @@ class SeventhPage(tk.Frame):
             row=2, column=0, columnspan=3, sticky="ns", pady=(10, 10)
         )
 
-    def start_threads(self):
+    def start_processes(self):
         selected_mode = self.headband_input.get_selected_mode()
         self.selected_mode_label.config(text=selected_mode)
         if selected_mode == "Beginner":
             self.headband_input.set_show_morse_code(True)
             self.morse_code_alphabet_frame.pack(side=BOTTOM)
-        self.listen_for_input_thread()
+        self.listen_for_input()

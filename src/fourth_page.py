@@ -59,10 +59,6 @@ class FourthPage(tk.Frame):
         self.progress_bar.pack_forget()
         self.controller.show_frame(FifthPage)
 
-    def analyse_values_thread(self):
-        self.analyse_thread = threading.Thread(target=self.analyse_values, args=())
-        self.analyse_thread.start()
-
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent, bg=constants.BACKGROUND_COLOUR)
         self.controller = controller
@@ -72,5 +68,5 @@ class FourthPage(tk.Frame):
         self.middle_frame = self.generate_middle_frame()
         self.middle_frame.grid(row=1, column=0, columnspan=3)
 
-    def start_threads(self):
-        self.analyse_values_thread()
+    def start_processes(self):
+        self.analyse_values()

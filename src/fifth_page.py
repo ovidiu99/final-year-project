@@ -144,10 +144,6 @@ class FifthPage(tk.Frame):
     def clench_input(self):
         self.headband_connection.listen_for_input(self.clench_handler)
 
-    def listen_for_clenching_thread(self):
-        self.clenching_thread = threading.Thread(target=self.clench_input, args=())
-        self.clenching_thread.start()
-
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent, bg=constants.BACKGROUND_COLOUR)
         self.controller = controller
@@ -163,5 +159,5 @@ class FifthPage(tk.Frame):
         self.middle_frame.grid(row=1, column=0, columnspan=3)
         self.bottom_frame.grid(row=2, column=0, columnspan=3, sticky="ns", pady=(0, 10))
 
-    def start_threads(self):
-        self.listen_for_clenching_thread()
+    def start_processes(self):
+        self.clench_input()
