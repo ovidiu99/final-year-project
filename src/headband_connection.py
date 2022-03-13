@@ -11,11 +11,16 @@ class HeadbandConnection:
     _blink_twice_detection_action = None
     _clench_detection_action = None
 
+    # Initialise the OSC server, the dispacher and make the server
+    # to serve forever in a thread to not interfere with the GUI
     def __init__(self, controller, ip, port=5000):
+        # Set the ip value, which is retrieved automatically in the Main class
         self.ip = ip
-        self.port = port
-        self.controller = controller
-        self.headband_input = self.controller.headband_input
+
+        # Set the ip value, which is retrieved automatically in the Main class
+        self.port = port  # the port used is the default 5000
+        self.controller = controller  # the controller is the Main class
+        self.headband_input = self.controller.headband_input  #
 
         self.dispatcher = dispatcher.Dispatcher()
         self.server = osc_server.ThreadingOSCUDPServer(

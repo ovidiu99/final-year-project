@@ -65,26 +65,19 @@ class FirstPage(tk.Frame):
         )
 
     def start_blink_twice_detection_check(self):
-        time.sleep(0.5)
         self.progress_bar.pack_forget()
         self.connect_label.config(text="Headband connected")
         self.blink_label.pack(pady=(25, 0), ipadx=(5))
         self.controller.headband_connection.blink_twice_detection(self.blink_detected)
+
+    def connection_check_successful(self):
+        self.start_blink_twice_detection_check()
 
     def connection_check_thread(self):
         self.connection_thread = threading.Thread(
             target=self.start_connection_check, args=()
         )
         self.connection_thread.start()
-
-    def blink_twice_detection_thread(self):
-        self.blink_thread = threading.Thread(
-            target=self.start_blink_twice_detection_check, args=()
-        )
-        self.blink_thread.start()
-
-    def connection_check_successful(self):
-        self.blink_twice_detection_thread()
 
     def blink_detected(self):
         self.controller.focus_force()
@@ -106,5 +99,5 @@ class FirstPage(tk.Frame):
         self.middle_frame = self.generate_middle_frame()
         self.middle_frame.grid(row=1, column=0, columnspan=3)
 
-    def start_threads(self):
+    def start_processes(self):
         self.connection_check_thread()

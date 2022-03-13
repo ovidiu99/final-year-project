@@ -112,15 +112,7 @@ class SixthPage(tk.Frame):
         return bottom_frame
 
     def start_clench_detection_check(self):
-        time.sleep(0.5)
         self.headband_connection.clench_detection(self.clench_detected)
-
-    def clench_detection_thread(self):
-        self.clench_thread = threading.Thread(
-            target=self.start_clench_detection_check,
-            args=(),
-        )
-        self.clench_thread.start()
 
     def clench_detected(self):
         from fifth_page import FifthPage
@@ -148,5 +140,5 @@ class SixthPage(tk.Frame):
         self.middle_frame.grid(row=1, column=0, columnspan=3)
         self.bottom_frame.grid(row=2, column=0, columnspan=3, sticky="ns", pady=(0, 10))
 
-    def start_threads(self):
-        self.clench_detection_thread()
+    def start_processes(self):
+        self.start_clench_detection_check()

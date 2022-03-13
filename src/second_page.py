@@ -67,24 +67,16 @@ class SecondPage(tk.Frame):
 
         return middle_frame
 
-    def start_blink_twice_detection_check(self, blink_detected_function_name):
-        function = self.blink_detected_functions_mapping[blink_detected_function_name]
-        time.sleep(0.5)
-        self.controller.headband_connection.blink_twice_detection(function)
-
-    def blink_twice_detection_thread(
+    def start_blink_twice_detection_check(
         self, blink_detected_function_name="start_recording"
     ):
-        self.blink_thread = threading.Thread(
-            target=self.start_blink_twice_detection_check,
-            args=(blink_detected_function_name,),
-        )
-        self.blink_thread.start()
+        function = self.blink_detected_functions_mapping[blink_detected_function_name]
+        self.controller.headband_connection.blink_twice_detection(function)
 
     def blink_to_start_recording_detected(self):
         self.blink_label.pack_forget()
         self.progress_bar.pack(pady=(25, 0))
-        self.record_normal_state_thread()
+        self.record_normal_state()
 
     def blink_to_go_to_next_page_detected(self):
         self.headband_connection.unmap_clench_detection()
@@ -94,12 +86,6 @@ class SecondPage(tk.Frame):
         self.headband_input.reinitialise_eeg_calm_state_values()
         self.update_progress_bar_thread()
         self.headband_connection.record_normal_state()
-
-    def record_normal_state_thread(self):
-        self.record_normal_thread = threading.Thread(
-            target=self.record_normal_state, args=()
-        )
-        self.record_normal_thread.start()
 
     def record_normal_state_finished(self):
         self.headband_connection.unmap_record_normal_state()
@@ -111,8 +97,8 @@ class SecondPage(tk.Frame):
         self.blink_label.config(text="Blink twice to continue")
         self.blink_label.pack(pady=(25, 0), ipadx=(5))
         self.clench_label.pack(pady=(15, 0), ipadx=(5))
-        self.blink_twice_detection_thread("next_page")
-        self.clench_detection_thread()
+        self.start_blink_twice_detection_check("next_page")
+        self.start_clench_detection_check()
 
     def update_progress_bar(self):
         for i in range(1, 6):
@@ -137,18 +123,10 @@ class SecondPage(tk.Frame):
         self.blink_label.config(text="Blink twice to start recording")
         self.blink_label.pack(pady=(25, 0), ipadx=(5))
         self.progress_bar["value"] = 0
-        self.blink_twice_detection_thread()
+        self.start_blink_twice_detection_check()
 
     def start_clench_detection_check(self):
-        time.sleep(0.5)
         self.headband_connection.clench_detection(self.clench_detected)
-
-    def clench_detection_thread(self):
-        self.clench_thread = threading.Thread(
-            target=self.start_clench_detection_check,
-            args=(),
-        )
-        self.clench_thread.start()
 
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent, bg=constants.BACKGROUND_COLOUR)
@@ -165,5 +143,5 @@ class SecondPage(tk.Frame):
             "next_page": self.blink_to_go_to_next_page_detected,
         }
 
-    def start_threads(self):
-        self.blink_twice_detection_thread()
+    def start_processes(self):
+        self.start_blink_twice_detection_check()
