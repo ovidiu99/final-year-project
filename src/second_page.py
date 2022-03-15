@@ -76,19 +76,14 @@ class SecondPage(tk.Frame):
     def blink_to_start_recording_detected(self):
         self.blink_label.pack_forget()
         self.progress_bar.pack(pady=(25, 0))
-        self.record_normal_state()
+        self.record_calm_state()
 
     def blink_to_go_to_next_page_detected(self):
         self.headband_connection.unmap_clench_detection()
         self.controller.show_frame(ThirdPage)
 
-    def record_normal_state(self):
-        self.headband_input.reinitialise_eeg_calm_state_values()
-        self.update_progress_bar_thread()
-        self.headband_connection.record_normal_state()
-
-    def record_normal_state_finished(self):
-        self.headband_connection.unmap_record_normal_state()
+    def record_calm_state_finished(self):
+        self.headband_connection.unmap_record_calm_state()
         time.sleep(1)
         self.progress_bar.pack_forget()
         self.label.config(
@@ -100,12 +95,17 @@ class SecondPage(tk.Frame):
         self.start_blink_twice_detection_check("next_page")
         self.start_clench_detection_check()
 
+    def record_calm_state(self):
+        self.headband_input.reinitialise_eeg_calm_state_values()
+        self.update_progress_bar_thread()
+        self.headband_connection.record_calm_state()
+
     def update_progress_bar(self):
-        for i in range(1, 6):
+        for _ in range(1, 6):
             time.sleep(1)
             self.progress_bar["value"] += 20
             self.update_idletasks()
-        self.record_normal_state_finished()
+        self.record_calm_state_finished()
 
     def update_progress_bar_thread(self):
         self.progress_bar_thread = threading.Thread(

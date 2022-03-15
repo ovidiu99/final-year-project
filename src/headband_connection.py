@@ -75,7 +75,7 @@ class HeadbandConnection:
         self.unmap_clench_detection()
         self._clench_detection_action()
 
-    def record_normal_state_handler(self, address: str, *args):
+    def record_calm_state_handler(self, address: str, *args):
         self.headband_input.save_eeg_calm_state_values([list(args)[1], list(args)[2]])
 
     def record_clenching_state_handler(self, address: str, *args):
@@ -105,8 +105,8 @@ class HeadbandConnection:
     def unmap_clench_detection(self):
         self.dispatcher.unmap("/muse/elements/jaw_clench", self.record_clench_handler)
 
-    def unmap_record_normal_state(self):
-        self.dispatcher.unmap("/muse/eeg", self.record_normal_state_handler)
+    def unmap_record_calm_state(self):
+        self.dispatcher.unmap("/muse/eeg", self.record_calm_state_handler)
 
     def unmap_record_clenching_state(self):
         self.dispatcher.unmap("/muse/eeg", self.record_clenching_state_handler)
@@ -138,8 +138,8 @@ class HeadbandConnection:
         self._clench_detection_action = trigger_function
         self.dispatcher.map("/muse/elements/jaw_clench", self.record_clench_handler)
 
-    def record_normal_state(self):
-        self.dispatcher.map("/muse/eeg", self.record_normal_state_handler)
+    def record_calm_state(self):
+        self.dispatcher.map("/muse/eeg", self.record_calm_state_handler)
 
     def record_clenching_state(self):
         self.dispatcher.map("/muse/eeg", self.record_clenching_state_handler)

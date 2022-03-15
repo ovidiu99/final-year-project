@@ -40,24 +40,24 @@ class Main(tk.Tk):
         self.headband_connection.listen_for_connection(self.handle_connection_values)
 
     def __init__(self, ip, port, *args, **kwargs):
+        # Initialise the Tk window
         tk.Tk.__init__(self, *args, **kwargs)
 
+        # Initialise the HeadbandInput and HeadbandConnection instances
         self.headband_input = HeadbandInput()
         self.headband_connection = HeadbandConnection(self, ip, port)
 
-        # region Set of the window's title and size
+        # Set of the window's title and size
         self.title("Head Writer")
         self.geometry(f"{self.frame_width}x{self.frame_height}")
-        # endregion
 
-        # region Initialise main frame
+        # Initialise main frame
         main_frame = tk.Frame(self)
         main_frame.pack(side="top", fill="both", expand=True)
         main_frame.grid_rowconfigure(0, weight=1)
         main_frame.grid_columnconfigure(0, weight=1)
-        # endregion
 
-        # region Battery and connection labels
+        # Battery and connection labels
         self.battery_label = tk.Label(
             self,
             text=" - % ",
@@ -66,16 +66,14 @@ class Main(tk.Tk):
             borderwidth=1,
             relief="solid",
         )
-
         self.connection_label = tk.Label(
             self,
             text="",
             font=constants.LABEL_FONT_VERY_SMALL_BOLD,
             bg=constants.BACKGROUND_COLOUR,
         )
-        # endregion
 
-        # region Initialise all the other pages
+        # Initialise all the other pages
         self.frames = {}
         for frame in (
             FirstPage,
@@ -90,7 +88,6 @@ class Main(tk.Tk):
             self.frames[frame] = page_frame
 
             page_frame.grid(row=0, column=0, sticky="nsew")
-        # endregion
 
         # Show the first page
         self.show_frame(FirstPage)

@@ -17,6 +17,17 @@ class FirstPage(tk.Frame):
         for column in range(columns):
             self.grid_columnconfigure(column, weight=1)
 
+    def generate_upper_frame(self):
+        upper_frame = tk.Frame(self, bg=constants.BACKGROUND_COLOUR)
+        self.welcome_label = tk.Label(
+            upper_frame,
+            text="Welcome to Head Writer",
+            font=constants.TITLE_FONT,
+            bg=constants.BACKGROUND_COLOUR,
+        )
+        self.welcome_label.pack()
+        return upper_frame
+
     def generate_middle_frame(self):
         middle_frame = tk.Frame(self, bg=constants.BACKGROUND_COLOUR)
         self.connect_label = tk.Label(
@@ -88,13 +99,8 @@ class FirstPage(tk.Frame):
         self.controller = controller
         self.initialise_grid()
 
-        self.welcome_label = tk.Label(
-            self,
-            text="Welcome to Head Writer",
-            font=constants.TITLE_FONT,
-            bg=constants.BACKGROUND_COLOUR,
-        )
-        self.welcome_label.grid(row=0, column=0, columnspan=3)
+        self.upper_frame = self.generate_upper_frame()
+        self.upper_frame.grid(row=0, column=0, columnspan=3)
 
         self.middle_frame = self.generate_middle_frame()
         self.middle_frame.grid(row=1, column=0, columnspan=3)
