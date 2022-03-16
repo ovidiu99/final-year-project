@@ -1,22 +1,25 @@
+import threading
+import time
+import constants
 import tkinter as tk
+
 from tkinter import ttk
 from tkinter import font as tkfont
 from tkinter.constants import HORIZONTAL
-import threading
-import time
 
-import constants
+from base_page import BasePage
 from fifth_page import FifthPage
 
 
-class FourthPage(tk.Frame):
-    def initialise_grid(self):
-        rows = 3
-        columns = 3
-        for row in range(rows):
-            self.grid_rowconfigure(row, weight=1)
-        for column in range(columns):
-            self.grid_columnconfigure(column, weight=1)
+class FourthPage(BasePage):
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent, bg=constants.BACKGROUND_COLOUR)
+        self.controller = controller
+        self.headband_input = self.controller.headband_input
+        self.initialise_grid()
+
+        self.middle_frame = self.generate_middle_frame()
+        self.middle_frame.grid(row=1, column=0, columnspan=3)
 
     def generate_middle_frame(self):
         middle_frame = tk.Frame(self, bg=constants.BACKGROUND_COLOUR)
@@ -58,15 +61,6 @@ class FourthPage(tk.Frame):
             continue
         self.progress_bar.pack_forget()
         self.controller.show_frame(FifthPage)
-
-    def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent, bg=constants.BACKGROUND_COLOUR)
-        self.controller = controller
-        self.headband_input = self.controller.headband_input
-        self.initialise_grid()
-
-        self.middle_frame = self.generate_middle_frame()
-        self.middle_frame.grid(row=1, column=0, columnspan=3)
 
     def start_processes(self):
         self.analyse_values()

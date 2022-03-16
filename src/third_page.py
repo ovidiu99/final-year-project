@@ -1,22 +1,30 @@
-import tkinter as tk
-from tkinter import ttk
-from tkinter import font as tkfont
-from tkinter.constants import HORIZONTAL
 import threading
 import time
-
 import constants
+import tkinter as tk
+
+from tkinter import ttk
+from tkinter.constants import HORIZONTAL
+
+from base_page import BasePage
 from fourth_page import FourthPage
 
 
-class ThirdPage(tk.Frame):
-    def initialise_grid(self):
-        rows = 3
-        columns = 3
-        for row in range(rows):
-            self.grid_rowconfigure(row, weight=1)
-        for column in range(columns):
-            self.grid_columnconfigure(column, weight=1)
+class ThirdPage(BasePage):
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent, bg=constants.BACKGROUND_COLOUR)
+        self.controller = controller
+        self.headband_connection = self.controller.headband_connection
+        self.headband_input = self.controller.headband_input
+        self.initialise_grid()
+
+        self.middle_frame = self.generate_middle_frame()
+        self.middle_frame.grid(row=1, column=0, columnspan=3)
+
+        self.clench_detected_functions_mapping = {
+            "start_recording": self.clench_to_start_recording_detected,
+            "re_record": self.clench_to_re_record_detected,
+        }
 
     def generate_middle_frame(self):
         middle_frame = tk.Frame(self, bg=constants.BACKGROUND_COLOUR)
@@ -137,21 +145,6 @@ class ThirdPage(tk.Frame):
             self.progress_bar["value"] += 20
             self.update_idletasks()
         self.record_clenching_state_finished()
-
-    def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent, bg=constants.BACKGROUND_COLOUR)
-        self.controller = controller
-        self.headband_connection = self.controller.headband_connection
-        self.headband_input = self.controller.headband_input
-        self.initialise_grid()
-
-        self.middle_frame = self.generate_middle_frame()
-        self.middle_frame.grid(row=1, column=0, columnspan=3)
-
-        self.clench_detected_functions_mapping = {
-            "start_recording": self.clench_to_start_recording_detected,
-            "re_record": self.clench_to_re_record_detected,
-        }
 
     def start_processes(self):
         self.start_clench_detection_check()

@@ -1,22 +1,30 @@
-import tkinter as tk
-from tkinter import ttk
-from tkinter import font as tkfont
-from tkinter.constants import HORIZONTAL
 import threading
 import time
-
+import tkinter as tk
 import constants
+
+from tkinter import ttk
+from tkinter.constants import HORIZONTAL
+
 from third_page import ThirdPage
+from base_page import BasePage
 
 
-class SecondPage(tk.Frame):
-    def initialise_grid(self):
-        rows = 3
-        columns = 3
-        for row in range(rows):
-            self.grid_rowconfigure(row, weight=1)
-        for column in range(columns):
-            self.grid_columnconfigure(column, weight=1)
+class SecondPage(BasePage):
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent, bg=constants.BACKGROUND_COLOUR)
+        self.controller = controller
+        self.headband_connection = self.controller.headband_connection
+        self.headband_input = self.controller.headband_input
+        self.initialise_grid()
+
+        self.middle_frame = self.generate_middle_frame()
+        self.middle_frame.grid(row=1, column=0, columnspan=3)
+
+        self.blink_detected_functions_mapping = {
+            "start_recording": self.blink_to_start_recording_detected,
+            "next_page": self.blink_to_go_to_next_page_detected,
+        }
 
     def generate_middle_frame(self):
         middle_frame = tk.Frame(self, bg=constants.BACKGROUND_COLOUR)
@@ -127,21 +135,6 @@ class SecondPage(tk.Frame):
 
     def start_clench_detection_check(self):
         self.headband_connection.clench_detection(self.clench_detected)
-
-    def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent, bg=constants.BACKGROUND_COLOUR)
-        self.controller = controller
-        self.headband_connection = self.controller.headband_connection
-        self.headband_input = self.controller.headband_input
-        self.initialise_grid()
-
-        self.middle_frame = self.generate_middle_frame()
-        self.middle_frame.grid(row=1, column=0, columnspan=3)
-
-        self.blink_detected_functions_mapping = {
-            "start_recording": self.blink_to_start_recording_detected,
-            "next_page": self.blink_to_go_to_next_page_detected,
-        }
 
     def start_processes(self):
         self.start_blink_twice_detection_check()

@@ -1,11 +1,4 @@
 import tkinter as tk
-from tkinter import ttk
-from tkinter.constants import HORIZONTAL
-import threading
-import time
-
-import constants
-from second_page import SecondPage
 
 
 class BasePage(tk.Frame):
