@@ -6,17 +6,22 @@ import time
 
 import constants
 from second_page import SecondPage
+from base_page import BasePage
 
 
-class FirstPage(tk.Frame):
-    def initialise_grid(self):
-        rows = 3
-        columns = 3
-        for row in range(rows):
-            self.grid_rowconfigure(row, weight=1)
-        for column in range(columns):
-            self.grid_columnconfigure(column, weight=1)
+class FirstPage(BasePage):
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent, bg=constants.BACKGROUND_COLOUR)
+        self.controller = controller  # The Tk window is the controller
+        self.initialise_grid()
 
+        self.upper_frame = self.generate_upper_frame()
+        self.upper_frame.grid(row=0, column=0, columnspan=3)
+
+        self.middle_frame = self.generate_middle_frame()
+        self.middle_frame.grid(row=1, column=0, columnspan=3)
+
+    # Methods for generatic the upper, middle and bottom parts of the page
     def generate_upper_frame(self):
         upper_frame = tk.Frame(self, bg=constants.BACKGROUND_COLOUR)
         self.welcome_label = tk.Label(
@@ -68,6 +73,7 @@ class FirstPage(tk.Frame):
 
         return middle_frame
 
+    # Methods for performing different actions in the page
     def start_connection_check(self):
         for i in range(1, 4):
             time.sleep(1)
@@ -93,17 +99,6 @@ class FirstPage(tk.Frame):
     def blink_detected(self):
         self.controller.focus_force()
         self.controller.show_frame(SecondPage)
-
-    def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent, bg=constants.BACKGROUND_COLOUR)
-        self.controller = controller
-        self.initialise_grid()
-
-        self.upper_frame = self.generate_upper_frame()
-        self.upper_frame.grid(row=0, column=0, columnspan=3)
-
-        self.middle_frame = self.generate_middle_frame()
-        self.middle_frame.grid(row=1, column=0, columnspan=3)
 
     def start_processes(self):
         self.connection_check_thread()

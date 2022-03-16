@@ -112,6 +112,8 @@ class ThirdPage(tk.Frame):
 
     def record_clenching_state_finished(self):
         self.headband_connection.unmap_record_clenching_state()
+
+        # region Hide the progress bar and show the next steps
         time.sleep(1)
         self.progress_bar.pack_forget()
         self.label.config(
@@ -121,6 +123,13 @@ class ThirdPage(tk.Frame):
         self.clench_to_re_record_label.pack(pady=(15, 0), ipadx=(5))
         self.start_blink_twice_detection_check()
         self.start_clench_detection_check("re_record")
+        # endregion
+
+    def update_progress_bar_thread(self):
+        self.progress_bar_thread = threading.Thread(
+            target=self.update_progress_bar, args=()
+        )
+        self.progress_bar_thread.start()
 
     def update_progress_bar(self):
         for i in range(1, 6):
@@ -128,12 +137,6 @@ class ThirdPage(tk.Frame):
             self.progress_bar["value"] += 20
             self.update_idletasks()
         self.record_clenching_state_finished()
-
-    def update_progress_bar_thread(self):
-        self.progress_bar_thread = threading.Thread(
-            target=self.update_progress_bar, args=()
-        )
-        self.progress_bar_thread.start()
 
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent, bg=constants.BACKGROUND_COLOUR)
