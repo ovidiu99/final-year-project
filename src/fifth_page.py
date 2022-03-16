@@ -112,12 +112,6 @@ class FifthPage(BasePage):
         self.action_label.pack(side=BOTTOM)
         return bottom_frame
 
-    def hide_action_label(self):
-        self.action_label.config(text="Action: None", fg=constants.BACKGROUND_COLOUR)
-
-    def show_action_label(self, text):
-        self.action_label.config(text=text, fg="black")
-
     def update_next_action_label(self, clench_length):
         if clench_length >= 1 and clench_length < 4:
             self.show_action_label("Action: Open tutorial page")

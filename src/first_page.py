@@ -13,7 +13,7 @@ class FirstPage(BasePage):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent, bg=constants.BACKGROUND_COLOUR)
         self.controller = controller  # The Tk window is the controller
-        self.initialise_grid()
+        self.initialise_grid() # Inherited from BasePage
 
         self.upper_frame = self.generate_upper_frame()
         self.upper_frame.grid(row=0, column=0, columnspan=3)
@@ -100,5 +100,6 @@ class FirstPage(BasePage):
         self.controller.focus_force()
         self.controller.show_frame(SecondPage)
 
+    # Start the logic of the page
     def start_processes(self):
         self.connection_check_thread()

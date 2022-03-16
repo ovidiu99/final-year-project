@@ -42,6 +42,9 @@ class SeventhPage(BasePage):
         for column in range(columns):
             self.grid_columnconfigure(column, weight=1)
 
+    def show_action_label(self, text):
+        self.action_label.config(text=text, fg="black", relief="solid")
+
     def generate_upper_frame(self):
         upper_frame = tk.Frame(self, bg=constants.BACKGROUND_COLOUR)
 
@@ -184,14 +187,6 @@ class SeventhPage(BasePage):
         self.selected_mode_frame.pack(side=BOTTOM, pady=(10, 0))
 
         return bottom_frame
-
-    def hide_action_label(self):
-        self.action_label.config(
-            text="Action: None", fg=constants.BACKGROUND_COLOUR, relief="flat"
-        )
-
-    def show_action_label(self, text):
-        self.action_label.config(text=text, fg="black", relief="solid")
 
     def update_next_action_label(
         self,
