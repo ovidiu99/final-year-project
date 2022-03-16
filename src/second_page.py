@@ -79,7 +79,7 @@ class SecondPage(BasePage):
         self, blink_detected_function_name="start_recording"
     ):
         function = self.blink_detected_functions_mapping[blink_detected_function_name]
-        self.controller.headband_connection.blink_twice_detection(function)
+        self.headband_connection.blink_twice_detection(function)
 
     def blink_to_start_recording_detected(self):
         self.blink_label.pack_forget()

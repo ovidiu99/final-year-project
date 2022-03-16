@@ -4,7 +4,6 @@ import constants
 import tkinter as tk
 
 from tkinter import ttk
-from tkinter import font as tkfont
 from tkinter.constants import HORIZONTAL
 
 from base_page import BasePage
@@ -57,6 +56,7 @@ class FourthPage(BasePage):
         self.timer = time.time()
         self.headband_input.calculate_average_calm_state_difference()
         self.headband_input.calculate_average_clenching_state_difference()
+        self.headband_input.calculate_threshold_values()
         while time.time() - self.timer < 3:
             continue
         self.progress_bar.pack_forget()
