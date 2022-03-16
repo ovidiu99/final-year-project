@@ -20,6 +20,9 @@ class HeadbandInput:
     _average_difference_af7_clenching_state = None
     _average_difference_af8_clenching_state = None
 
+    _threshold_af7 = None
+    _threshold_af8 = None
+
     _input_listening_values = []
 
     _clenching_sequence = []
@@ -87,16 +90,15 @@ class HeadbandInput:
     def get_eeg_clenching_state_values(self):
         return self._eeg_clenching_state_values
 
-    def get_clenching_threshold_values(self):
-        threshold_af7 = (
+    def calculate_threshold_values(self):
+        self._threshold_af7 = (
             self._average_difference_af7_calm_state
             + self._average_difference_af7_clenching_state
         ) / 2
-        threshold_af8 = (
+        self._threshold_af8 = (
             self._average_difference_af8_calm_state
             + self._average_difference_af8_clenching_state
         ) / 2
-        return threshold_af7, threshold_af8
 
     def change_selected_mode(self):
         if self._selected_mode == "Beginner":
@@ -124,8 +126,8 @@ class HeadbandInput:
         last_lowest_point_af8 = -1
         af8_counter = 1
 
-        average_difference_af7 = -1
-        average_difference_af8 = -1
+        average_difference_af7 = 0
+        average_difference_af8 = 0
 
         for i in range(1, len(list) - 1):
             # AF7 sensor
@@ -390,12 +392,10 @@ class HeadbandInput:
         self,
         average_af7_difference,
         average_af8_difference,
-        threshold_af7,
-        threshold_af8,
         current_page,
     ):
-        if (average_af7_difference >= threshold_af7) or (
-            average_af8_difference >= threshold_af8
+        if (average_af7_difference >= self._threshold_af7) and (
+            average_af8_difference >= self._threshold_af8
         ):
             self.handle_unit_clenches_seventh_page(current_page)
         else:
@@ -424,12 +424,10 @@ class HeadbandInput:
         self,
         average_af7_difference,
         average_af8_difference,
-        threshold_af7,
-        threshold_af8,
         current_page,
     ):
-        if (average_af7_difference >= threshold_af7) or (
-            average_af8_difference >= threshold_af8
+        if (average_af7_difference >= self._threshold_af7) and (
+            average_af8_difference >= self._threshold_af8
         ):
             self.handle_unit_clenches_fifth_page(current_page)
         else:
@@ -441,7 +439,6 @@ class HeadbandInput:
         if time.time() - self._input_timer >= 0.25:
             self._input_timer = time.time()
             values = self._input_listening_values
-            threshold_af7, threshold_af8 = self.get_clenching_threshold_values()
             (
                 average_af7_difference,
                 average_af8_difference,
@@ -451,16 +448,12 @@ class HeadbandInput:
                 self.handle_input_fifth_page(
                     average_af7_difference,
                     average_af8_difference,
-                    threshold_af7,
-                    threshold_af8,
                     current_page,
                 )
             elif page_name == "SeventhPage":
                 self.handle_input_seventh_page(
                     average_af7_difference,
                     average_af8_difference,
-                    threshold_af7,
-                    threshold_af8,
                     current_page,
                 )
 

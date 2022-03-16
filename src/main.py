@@ -1,5 +1,3 @@
-from headband_connection import HeadbandConnection
-
 import tkinter as tk
 import constants
 import socket
@@ -12,6 +10,8 @@ from third_page import ThirdPage
 from fourth_page import FourthPage
 from fifth_page import FifthPage
 from sixth_page import SixthPage
+
+from headband_connection import HeadbandConnection
 
 
 class Main(tk.Tk):
