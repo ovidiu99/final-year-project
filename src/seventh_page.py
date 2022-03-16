@@ -1,16 +1,36 @@
-import tkinter as tk
-from tkinter import BOTTOM, CENTER, LEFT, RIGHT, ttk
-from tkinter import font as tkfont
-from tkinter.constants import HORIZONTAL, TOP
-import threading
-import time
-from turtle import width
-
 import constants
+
+import tkinter as tk
+
+from tkinter import BOTTOM, LEFT, RIGHT
+from tkinter.constants import TOP
+
 from sixth_page import SixthPage
+from base_page import BasePage
 
 
-class SeventhPage(tk.Frame):
+class SeventhPage(BasePage):
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent, bg=constants.BACKGROUND_COLOUR)
+        self.controller = controller
+        self.headband_connection = self.controller.headband_connection
+        self.headband_input = self.controller.headband_input
+        self.initialise_grid()
+
+        self.upper_frame = self.generate_upper_frame()
+        self.middle_frame = self.generate_middle_frame()
+        self.bottom_frame = self.generate_bottom_frame()
+
+        self.upper_frame.grid(
+            row=0, column=0, columnspan=3, sticky="nswe", pady=(0, 20)
+        )
+        self.middle_frame.grid(
+            row=1, column=0, columnspan=3, sticky="nswe", padx=(10, 10)
+        )
+        self.bottom_frame.grid(
+            row=2, column=0, columnspan=3, sticky="ns", pady=(10, 10)
+        )
+
     def initialise_grid(self):
         rows = 3
         columns = 3
@@ -21,6 +41,9 @@ class SeventhPage(tk.Frame):
                 self.grid_rowconfigure(row, weight=1)
         for column in range(columns):
             self.grid_columnconfigure(column, weight=1)
+
+    def show_action_label(self, text):
+        self.action_label.config(text=text, fg="black", relief="solid")
 
     def generate_upper_frame(self):
         upper_frame = tk.Frame(self, bg=constants.BACKGROUND_COLOUR)
@@ -165,14 +188,6 @@ class SeventhPage(tk.Frame):
 
         return bottom_frame
 
-    def hide_action_label(self):
-        self.action_label.config(
-            text="Action: None", fg=constants.BACKGROUND_COLOUR, relief="flat"
-        )
-
-    def show_action_label(self, text):
-        self.action_label.config(text=text, fg="black", relief="solid")
-
     def update_next_action_label(
         self,
         clench_length,
@@ -270,27 +285,6 @@ class SeventhPage(tk.Frame):
     def stop_copy_mode(self):
         self.controller.focus_force()
         self.headband_connection.unmap_listen_for_head_movement()
-
-    def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent, bg=constants.BACKGROUND_COLOUR)
-        self.controller = controller
-        self.headband_connection = self.controller.headband_connection
-        self.headband_input = self.controller.headband_input
-        self.initialise_grid()
-
-        self.upper_frame = self.generate_upper_frame()
-        self.middle_frame = self.generate_middle_frame()
-        self.bottom_frame = self.generate_bottom_frame()
-
-        self.upper_frame.grid(
-            row=0, column=0, columnspan=3, sticky="nswe", pady=(0, 20)
-        )
-        self.middle_frame.grid(
-            row=1, column=0, columnspan=3, sticky="nswe", padx=(10, 10)
-        )
-        self.bottom_frame.grid(
-            row=2, column=0, columnspan=3, sticky="ns", pady=(10, 10)
-        )
 
     def start_processes(self):
         selected_mode = self.headband_input.get_selected_mode()

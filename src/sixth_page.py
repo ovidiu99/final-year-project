@@ -1,22 +1,28 @@
-import tkinter as tk
-from tkinter import BOTTOM, ttk
-from tkinter import font as tkfont
-from tkinter.constants import HORIZONTAL, LEFT, TOP
-
-import threading
-import time
-
 import constants
 
+import tkinter as tk
 
-class SixthPage(tk.Frame):
-    def initialise_grid(self):
-        rows = 3
-        columns = 3
-        for row in range(rows):
-            self.grid_rowconfigure(row, weight=1)
-        for column in range(columns):
-            self.grid_columnconfigure(column, weight=1)
+from tkinter import BOTTOM
+from tkinter.constants import LEFT, TOP
+
+from base_page import BasePage
+
+
+class SixthPage(BasePage):
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent, bg=constants.BACKGROUND_COLOUR)
+        self.controller = controller
+        self.headband_connection = self.controller.headband_connection
+        self.headband_input = self.controller.headband_input
+        self.initialise_grid()
+
+        self.upper_frame = self.generate_upper_frame()
+        self.middle_frame = self.generate_middle_frame()
+        self.bottom_frame = self.generate_bottom_frame()
+
+        self.upper_frame.grid(row=0, column=0, columnspan=3)
+        self.middle_frame.grid(row=1, column=0, columnspan=3)
+        self.bottom_frame.grid(row=2, column=0, columnspan=3, sticky="ns", pady=(0, 10))
 
     def generate_upper_frame(self):
         upper_frame = tk.Frame(self, bg=constants.BACKGROUND_COLOUR)
@@ -124,21 +130,6 @@ class SixthPage(tk.Frame):
             self.controller.show_frame(FifthPage)
         else:
             self.controller.show_frame(SeventhPage)
-
-    def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent, bg=constants.BACKGROUND_COLOUR)
-        self.controller = controller
-        self.headband_connection = self.controller.headband_connection
-        self.headband_input = self.controller.headband_input
-        self.initialise_grid()
-
-        self.upper_frame = self.generate_upper_frame()
-        self.middle_frame = self.generate_middle_frame()
-        self.bottom_frame = self.generate_bottom_frame()
-
-        self.upper_frame.grid(row=0, column=0, columnspan=3)
-        self.middle_frame.grid(row=1, column=0, columnspan=3)
-        self.bottom_frame.grid(row=2, column=0, columnspan=3, sticky="ns", pady=(0, 10))
 
     def start_processes(self):
         self.start_clench_detection_check()

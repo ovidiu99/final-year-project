@@ -1,22 +1,30 @@
-import tkinter as tk
-from tkinter import ttk
-from tkinter import font as tkfont
-from tkinter.constants import HORIZONTAL
 import threading
 import time
-
 import constants
+import tkinter as tk
+
+from tkinter import ttk
+from tkinter.constants import HORIZONTAL
+
+from base_page import BasePage
 from fourth_page import FourthPage
 
 
-class ThirdPage(tk.Frame):
-    def initialise_grid(self):
-        rows = 3
-        columns = 3
-        for row in range(rows):
-            self.grid_rowconfigure(row, weight=1)
-        for column in range(columns):
-            self.grid_columnconfigure(column, weight=1)
+class ThirdPage(BasePage):
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent, bg=constants.BACKGROUND_COLOUR)
+        self.controller = controller
+        self.headband_connection = self.controller.headband_connection
+        self.headband_input = self.controller.headband_input
+        self.initialise_grid()
+
+        self.middle_frame = self.generate_middle_frame()
+        self.middle_frame.grid(row=1, column=0, columnspan=3)
+
+        self.clench_detected_functions_mapping = {
+            "start_recording": self.clench_to_start_recording_detected,
+            "re_record": self.clench_to_re_record_detected,
+        }
 
     def generate_middle_frame(self):
         middle_frame = tk.Frame(self, bg=constants.BACKGROUND_COLOUR)
@@ -112,6 +120,8 @@ class ThirdPage(tk.Frame):
 
     def record_clenching_state_finished(self):
         self.headband_connection.unmap_record_clenching_state()
+
+        # region Hide the progress bar and show the next steps
         time.sleep(1)
         self.progress_bar.pack_forget()
         self.label.config(
@@ -121,13 +131,7 @@ class ThirdPage(tk.Frame):
         self.clench_to_re_record_label.pack(pady=(15, 0), ipadx=(5))
         self.start_blink_twice_detection_check()
         self.start_clench_detection_check("re_record")
-
-    def update_progress_bar(self):
-        for i in range(1, 6):
-            time.sleep(1)
-            self.progress_bar["value"] += 20
-            self.update_idletasks()
-        self.record_clenching_state_finished()
+        # endregion
 
     def update_progress_bar_thread(self):
         self.progress_bar_thread = threading.Thread(
@@ -135,20 +139,12 @@ class ThirdPage(tk.Frame):
         )
         self.progress_bar_thread.start()
 
-    def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent, bg=constants.BACKGROUND_COLOUR)
-        self.controller = controller
-        self.headband_connection = self.controller.headband_connection
-        self.headband_input = self.controller.headband_input
-        self.initialise_grid()
-
-        self.middle_frame = self.generate_middle_frame()
-        self.middle_frame.grid(row=1, column=0, columnspan=3)
-
-        self.clench_detected_functions_mapping = {
-            "start_recording": self.clench_to_start_recording_detected,
-            "re_record": self.clench_to_re_record_detected,
-        }
+    def update_progress_bar(self):
+        for i in range(1, 6):
+            time.sleep(1)
+            self.progress_bar["value"] += 20
+            self.update_idletasks()
+        self.record_clenching_state_finished()
 
     def start_processes(self):
         self.start_clench_detection_check()

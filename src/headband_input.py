@@ -6,6 +6,8 @@ from constants import MORSE_CODE
 
 
 class HeadbandInput:
+
+    # Private variables
     _blink_count = 0
     _last_blink_timer = None
 
@@ -40,23 +42,23 @@ class HeadbandInput:
 
     _screen_width, _screen_height = pyautogui.size()
 
+    # Getter and setter for the blink count
     def get_blink_count(self):
         return self._blink_count
 
     def set_blink_count(self, value):
         self._blink_count = value
 
-    def add_blink_count(self):
-        self._blink_count += 1
-
-    def clear_blink_count(self):
-        self._blink_count = 0
-
+    # Getter and setter for the last blink timer
     def get_last_blink_timer(self):
         return self._last_blink_timer
 
     def reinitialise_last_blink_timer(self):
         self._last_blink_timer = time.time()
+
+    # Getter and setters for the calm eeg values
+    def get_eeg_calm_state_values(self):
+        return self._eeg_calm_state_values
 
     def save_eeg_calm_state_values(self, eeg_list):
         self._eeg_calm_state_values.append(eeg_list)
@@ -64,8 +66,17 @@ class HeadbandInput:
     def reinitialise_eeg_calm_state_values(self):
         self._eeg_calm_state_values = []
 
-    def get_eeg_calm_state_values(self):
-        return self._eeg_calm_state_values
+    def get_show_morse_code(self):
+        return self._show_morse_code
+
+    def set_show_morse_code(self, value):
+        self._show_morse_code = value
+
+    def add_blink_count(self):
+        self._blink_count += 1
+
+    def clear_blink_count(self):
+        self._blink_count = 0
 
     def save_eeg_clenching_state_values(self, eeg_list):
         self._eeg_clenching_state_values.append(eeg_list)
@@ -198,12 +209,6 @@ class HeadbandInput:
             last_enter_index = text_length - 1 - enter_in_reversed_text
             text_after_last_enter = text[-(len(text) - last_enter_index - 1) :]
         return text_after_last_enter
-
-    def get_show_morse_code(self):
-        return self._show_morse_code
-
-    def set_show_morse_code(self, value):
-        self._show_morse_code = value
 
     def max_characters_not_reached(self):
         number_of_enters = self.get_number_of_enters()

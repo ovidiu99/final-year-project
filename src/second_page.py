@@ -1,22 +1,30 @@
-import tkinter as tk
-from tkinter import ttk
-from tkinter import font as tkfont
-from tkinter.constants import HORIZONTAL
 import threading
 import time
-
+import tkinter as tk
 import constants
+
+from tkinter import ttk
+from tkinter.constants import HORIZONTAL
+
 from third_page import ThirdPage
+from base_page import BasePage
 
 
-class SecondPage(tk.Frame):
-    def initialise_grid(self):
-        rows = 3
-        columns = 3
-        for row in range(rows):
-            self.grid_rowconfigure(row, weight=1)
-        for column in range(columns):
-            self.grid_columnconfigure(column, weight=1)
+class SecondPage(BasePage):
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent, bg=constants.BACKGROUND_COLOUR)
+        self.controller = controller
+        self.headband_connection = self.controller.headband_connection
+        self.headband_input = self.controller.headband_input
+        self.initialise_grid()
+
+        self.middle_frame = self.generate_middle_frame()
+        self.middle_frame.grid(row=1, column=0, columnspan=3)
+
+        self.blink_detected_functions_mapping = {
+            "start_recording": self.blink_to_start_recording_detected,
+            "next_page": self.blink_to_go_to_next_page_detected,
+        }
 
     def generate_middle_frame(self):
         middle_frame = tk.Frame(self, bg=constants.BACKGROUND_COLOUR)
@@ -76,19 +84,14 @@ class SecondPage(tk.Frame):
     def blink_to_start_recording_detected(self):
         self.blink_label.pack_forget()
         self.progress_bar.pack(pady=(25, 0))
-        self.record_normal_state()
+        self.record_calm_state()
 
     def blink_to_go_to_next_page_detected(self):
         self.headband_connection.unmap_clench_detection()
         self.controller.show_frame(ThirdPage)
 
-    def record_normal_state(self):
-        self.headband_input.reinitialise_eeg_calm_state_values()
-        self.update_progress_bar_thread()
-        self.headband_connection.record_normal_state()
-
-    def record_normal_state_finished(self):
-        self.headband_connection.unmap_record_normal_state()
+    def record_calm_state_finished(self):
+        self.headband_connection.unmap_record_calm_state()
         time.sleep(1)
         self.progress_bar.pack_forget()
         self.label.config(
@@ -100,12 +103,17 @@ class SecondPage(tk.Frame):
         self.start_blink_twice_detection_check("next_page")
         self.start_clench_detection_check()
 
+    def record_calm_state(self):
+        self.headband_input.reinitialise_eeg_calm_state_values()
+        self.update_progress_bar_thread()
+        self.headband_connection.record_calm_state()
+
     def update_progress_bar(self):
-        for i in range(1, 6):
+        for _ in range(1, 6):
             time.sleep(1)
             self.progress_bar["value"] += 20
             self.update_idletasks()
-        self.record_normal_state_finished()
+        self.record_calm_state_finished()
 
     def update_progress_bar_thread(self):
         self.progress_bar_thread = threading.Thread(
@@ -127,21 +135,6 @@ class SecondPage(tk.Frame):
 
     def start_clench_detection_check(self):
         self.headband_connection.clench_detection(self.clench_detected)
-
-    def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent, bg=constants.BACKGROUND_COLOUR)
-        self.controller = controller
-        self.headband_connection = self.controller.headband_connection
-        self.headband_input = self.controller.headband_input
-        self.initialise_grid()
-
-        self.middle_frame = self.generate_middle_frame()
-        self.middle_frame.grid(row=1, column=0, columnspan=3)
-
-        self.blink_detected_functions_mapping = {
-            "start_recording": self.blink_to_start_recording_detected,
-            "next_page": self.blink_to_go_to_next_page_detected,
-        }
 
     def start_processes(self):
         self.start_blink_twice_detection_check()
