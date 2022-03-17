@@ -394,7 +394,7 @@ class HeadbandInput:
         average_af8_difference,
         current_page,
     ):
-        if (average_af7_difference >= self._threshold_af7) and (
+        if (average_af7_difference >= self._threshold_af7) or (
             average_af8_difference >= self._threshold_af8
         ):
             self.handle_unit_clenches_seventh_page(current_page)
@@ -426,7 +426,7 @@ class HeadbandInput:
         average_af8_difference,
         current_page,
     ):
-        if (average_af7_difference >= self._threshold_af7) and (
+        if (average_af7_difference >= self._threshold_af7) or (
             average_af8_difference >= self._threshold_af8
         ):
             self.handle_unit_clenches_fifth_page(current_page)
