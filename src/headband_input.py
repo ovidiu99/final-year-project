@@ -4,8 +4,12 @@ import pyperclip
 
 from constants import MORSE_CODE
 
+from pynput.mouse import Button, Controller
+
 
 class HeadbandInput:
+
+    _mouse = Controller()
 
     # Private variables
     _blink_count = 0
@@ -367,9 +371,9 @@ class HeadbandInput:
     def handle_unit_pauses_copy_mode(self, current_page):
         clench_length = len(self._clenching_sequence)
         if clench_length == 1:
-            pyautogui.click()
+            self._mouse.click(Button.left, 1)
         elif clench_length >= 2 and clench_length <= 4:
-            pyautogui.doubleClick()
+            self._mouse.click(Button.left, 2)
         elif clench_length >= 5 and clench_length <= 9:
             pyautogui.hotkey("command", "v")
         elif clench_length >= 10 and clench_length <= 13:
