@@ -28,7 +28,7 @@ class SixthPage(BasePage):
         upper_frame = tk.Frame(self, bg=constants.BACKGROUND_COLOUR)
         self.text_label_upper = tk.Label(
             upper_frame,
-            text="Help page",
+            text="Tutorial page",
             font=constants.LABEL_FONT_BOLD,
             bg=constants.BACKGROUND_COLOUR,
         )

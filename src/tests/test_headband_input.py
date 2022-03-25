@@ -1,6 +1,5 @@
 import pytest
 
-
 from headband_input import HeadbandInput
 
 
