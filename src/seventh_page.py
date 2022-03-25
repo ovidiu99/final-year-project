@@ -48,9 +48,9 @@ class SeventhPage(BasePage):
     def generate_upper_frame(self):
         upper_frame = tk.Frame(self, bg=constants.BACKGROUND_COLOUR)
 
-        self.help_page_label = tk.Label(
+        self.tutorial_page_label = tk.Label(
             upper_frame,
-            text="Help page - 14x clench units",
+            text="Tutorial page - 14x clench units",
             font=constants.LABEL_FONT_SMALL,
             bg=constants.BACKGROUND_COLOUR,
             borderwidth=2,
@@ -67,7 +67,7 @@ class SeventhPage(BasePage):
             relief="flat",
         )
 
-        self.help_page_label.pack(
+        self.tutorial_page_label.pack(
             side=LEFT, anchor="n", padx=(10, 0), pady=(20, 0), ipadx=(10), ipady=(5)
         )
 
