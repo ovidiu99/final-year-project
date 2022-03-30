@@ -256,12 +256,14 @@ class HeadbandInput:
         )
 
     def handle_extra_commands(self, clenching_sequence_length, current_page):
+        # Add a space if there are 5-7 clench units
         if (
             clenching_sequence_length >= 5
             and clenching_sequence_length <= 7
             and self._selected_mode == "Beginner"
         ):
             self.add_to_output_sequence(" ")
+        # Delete the last character if there are 8-9 clench units
         if clenching_sequence_length >= 8 and clenching_sequence_length <= 9:
             if self._dots_lines_sequence != "":
                 sequence = self._dots_lines_sequence
@@ -281,23 +283,31 @@ class HeadbandInput:
                         )
 
             current_page.hide_action_label()
+        # Change the mode of operation if there are 10-11 clench units
         elif clenching_sequence_length >= 10 and clenching_sequence_length <= 11:
             current_page.update_selected_mode()
+        # Show/hide the morse code alphabet if there are 12-13 clench units
         elif clenching_sequence_length >= 12 and clenching_sequence_length <= 13:
             current_page.hide_show_morse_code(self._show_morse_code)
+        # Open the tutorial page if there are 14-15 clench units
         elif clenching_sequence_length >= 14 and clenching_sequence_length <= 15:
             current_page.open_tutorial_page()
+        # Start the copy mode if there are 16-20 clench units
         elif clenching_sequence_length >= 16 and clenching_sequence_length <= 20:
             self._copy_mode = True
             clean_text = self.get_output_sequence_without_enters()
+            # Copy the current text to the clipboard
             pyperclip.copy(clean_text)
+            # Move the cursor of the mouse to the center of the screen
             pyautogui.moveTo(self._screen_width / 2, self._screen_height / 2)
             current_page.start_copy_mode()
 
     def handle_lines_and_dots(self, clenching_sequence_length):
+        # Add a dot if there is 1 clench unit
         if clenching_sequence_length == 1:
             self._dots_lines_sequence += "."
             self.add_to_output_sequence(".")
+        # Add a line if there are 2-4 clench units
         elif clenching_sequence_length >= 2 and clenching_sequence_length <= 4:
             self._dots_lines_sequence += "-"
             self.add_to_output_sequence("-")
@@ -320,46 +330,38 @@ class HeadbandInput:
             self.add_to_output_sequence(symbol)
         self._dots_lines_sequence = ""
 
-    def handle_unit_pauses_beginner_mode(self, current_page):
+    def handle_unit_pauses(self, current_page):
         clenching_sequence_length = len(self._clenching_sequence)
         lambdas_sequence_length = self._output_sequence.count("~")
         self._output_sequence = self.trim_string(
             self._output_sequence, lambdas_sequence_length + self._enter_count
         )
         self._pause_units += 1
+
+        # Determine the lowest number of clench units that triggers the handling
+        # of the extra commands. 5 for Beginner and 7 for Advanced
+        extra_commands_threshold = 5
+        if self._selected_mode == "Advanced":
+            extra_commands_threshold = 7
+
+        # Call the handle_extra_commands function 
         if (
             self._pause_units == 1
-            and clenching_sequence_length >= 5
+            and clenching_sequence_length > extra_commands_threshold
             and self._dots_lines_sequence == ""
         ):
             self.handle_extra_commands(clenching_sequence_length, current_page)
-        elif self._pause_units < 3 and clenching_sequence_length > 0:
+        # Handle the lines or dots 
+        elif self._pause_units == 1 and clenching_sequence_length <= 4:
             self.handle_lines_and_dots(clenching_sequence_length)
+        # After every 3 pause units, try and convert the current morse code 
+        # structure into a symbol
         elif self._pause_units == 3 and self._dots_lines_sequence != "":
             self.handle_add_symbol()
-
-        self._clenching_sequence = []
-        self._enter_count = 0
-
-    def handle_unit_pauses_advanced_mode(self, current_page):
-        clenching_sequence_length = len(self._clenching_sequence)
-        lambdas_sequence_length = self._output_sequence.count("~")
-        self._output_sequence = self.trim_string(
-            self._output_sequence, lambdas_sequence_length + self._enter_count
-        )
-        self._pause_units += 1
-        if (
-            self._pause_units == 1
-            and clenching_sequence_length > 7
-            and self._dots_lines_sequence == ""
-        ):
-            self.handle_extra_commands(clenching_sequence_length, current_page)
-        elif self._pause_units < 3 and clenching_sequence_length > 0:
-            self.handle_lines_and_dots(clenching_sequence_length)
-        elif self._pause_units == 3 and self._dots_lines_sequence != "":
-            self.handle_add_symbol()
+        # If in advanced mode, automatically add a space after 7 pause units
         elif (
-            self._pause_units == 7
+            self._selected_mode == "Advanced"
+            and self._pause_units == 7
             and self._output_sequence != ""
             and self._output_sequence[-1] != " "
         ):
@@ -370,12 +372,17 @@ class HeadbandInput:
 
     def handle_unit_pauses_copy_mode(self, current_page):
         clench_length = len(self._clenching_sequence)
+        
+        # Perform a mouse click if there is 1 clench unit
         if clench_length == 1:
             self._mouse.click(Button.left, 1)
+        # Perform a double mouse click if there are 12-13 clench units
         elif clench_length >= 2 and clench_length <= 4:
             self._mouse.click(Button.left, 2)
+        # Paste the text if there are 5-9 clench units
         elif clench_length >= 5 and clench_length <= 9:
             pyautogui.hotkey("command", "v")
+        # Close the copy mode if there are 5-9 clench units
         elif clench_length >= 10 and clench_length <= 13:
             self._copy_mode = False
             current_page.stop_copy_mode()
@@ -386,10 +393,8 @@ class HeadbandInput:
     def handle_unit_pauses_seventh_page(self, current_page):
         if self._copy_mode is True:
             self.handle_unit_pauses_copy_mode(current_page)
-        elif self._selected_mode == "Beginner":
-            self.handle_unit_pauses_beginner_mode(current_page)
-        elif self._selected_mode == "Advanced":
-            self.handle_unit_pauses_advanced_mode(current_page)
+        else:
+            self.handle_unit_pauses(current_page)
         current_page.hide_action_label()
 
     def handle_input_seventh_page(
@@ -463,9 +468,9 @@ class HeadbandInput:
 
             self._input_listening_values = []
 
-    def handle_head_movement(self, eeg_list, current_page):
-        y_value = eeg_list[0]
-        z_value = eeg_list[1]
+    def handle_head_movement(self, gyro_list):
+        y_value = gyro_list[0]
+        z_value = gyro_list[1]
 
         if y_value > 7:
             pyautogui.move(0, -y_value)

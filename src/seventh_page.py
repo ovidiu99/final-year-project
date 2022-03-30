@@ -274,7 +274,7 @@ class SeventhPage(BasePage):
         self.headband_connection.listen_for_input(self.handle_input)
 
     def handle_head_movement(self, input_list):
-        self.headband_input.handle_head_movement(input_list, self)
+        self.headband_input.handle_head_movement(input_list)
 
     def listen_for_head_movement(self):
         self.headband_connection.listen_for_head_movement(self.handle_head_movement)

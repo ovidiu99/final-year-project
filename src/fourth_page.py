@@ -54,11 +54,15 @@ class FourthPage(BasePage):
 
     def analyse_values(self):
         self.timer = time.time()
+
         self.headband_input.calculate_average_calm_state_difference()
         self.headband_input.calculate_average_clenching_state_difference()
         self.headband_input.calculate_threshold_values()
+
+        # Wait three seconds before proceeding
         while time.time() - self.timer < 3:
             continue
+
         self.progress_bar.pack_forget()
         self.controller.show_frame(FifthPage)
 
